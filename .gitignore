@@ -1,0 +1,22 @@
+# Ignore compiled files
+Lab_01/*.o
+Lab_01/*.out
+Lab_01/Lab01_manual.pdf
+
+Lab_02/*.o
+Lab_02/*.out
+Lab_02/Lab02_manual.pdf
+
+Lab_03/*.o
+Lab_03/*.out
+Lab_03/Lab03_manual.pdf
+
+Lab_04/*.o
+Lab_04/*.out
+Lab_04/Lab04_manual.pdf
+
+# Ignore log files
+*.log
+
+# Ignore temporary directories
+temp/
