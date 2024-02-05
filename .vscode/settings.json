@@ -1,0 +1,8 @@
+{
+    "files.associations": {
+        "mymath.h": "c",
+        "hra.h": "c",
+        "resource.h": "c",
+        "string_view": "c"
+    }
+}
