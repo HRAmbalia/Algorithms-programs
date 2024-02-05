@@ -3,21 +3,30 @@
 #include <stdlib.h>
 
 // Demo Summation function
-int addNumbers(int a, int b) {
+int addNumbers(int integer_01, int integer_02) {
     /*
-        Input : Two integer numbers
-        Output : integer
-        Explaination : This function will sreturn the sum of the given two numbers.
+        Input:
+            - a (int): The first integer.
+            - b (int): The second integer.
+        Output:
+            - Returns the sum of the two input integers (int).
+        Explanation:
+            This function takes two integers as input parameters and returns their sum.
+            It provides a simple addition operation for integer values.
     */
-    return a + b;
+    return integer_01 + integer_02;
 }
 
 // Print 1D array
-void print_1d_array(int arr[], int size) {
+void my_print_1d_integer_array(int arr[], int size) {
     /*
-        Input : integer array, length of array
-        Output : void, prints array on console
-        Explaination : This function will do nothing but prints the array
+        Input: 
+            - arr (int[]): 1D array to be printed.
+            - size (int): Size of the array.
+        Output: 
+            - void (prints the elements of the array to the console).
+        Explanation: 
+            This function prints the elements of a 1D array to the console.
     */
     for (int i=0;i<size;i++) {
         printf("%d ", arr[i]);
@@ -25,33 +34,65 @@ void print_1d_array(int arr[], int size) {
     printf("\n");
 }
 
-/* ------------------------------------- LAB 01 ------------------------------------- */
-
-// Insertion Sort
-void insertionSort(int arr[], int size) {
+// Print 2D array
+void my_print_2d_integer_array(int rows, int cols, int** arr) {
     /*
-        Input : integer Array, Integer length of the array
-        Output : void, prints array at each stage and level
-        Explaination : This function will sort the given array in ascending order
+        Input:
+            - rows (int): Number of rows in the 2D array.
+            - cols (int): Number of columns in the 2D array.
+            - arr (int**): Pointer to a 2D array.
+        Output:
+            - void (prints the 2D array to the console).
+        Explanation:
+            This function prints the elements of a 2D array to the console.
     */
-    for (int i=1;i<size;i++) {
-        int current = arr[i];
-        int j = i-1;
 
-        while(arr[j]>current && j>=0) {
-            arr[j+1] = arr[j];
-            j--;
+    for( int i=0;i<rows;i++ ) {
+        for( int j=0;j<cols;j++ ) {
+            printf("%d\t", arr[i][j]);
         }
-        arr[j+1] = current;
+        printf("\n");
     }
 }
 
-// Generate magic square
-int** create_magic_square(int length) {
+/* ------------------------------------- LAB 01 ------------------------------------- */
+
+// Lab01 : Insertion Sort
+void my_insertionSort_asc_for_integer_array(int integer_array[], int length_of_array) {
     /*
-        Input : Odd integer number
-        Output : 2d integer array pointer
-        Explaination : This function find the Magic square for given size
+        Input: 
+            - integer_array (int[]): An array of integers to be sorted.
+            - length_of_array (int): The length of the integer_array.
+        Output: 
+            - void (The function sorts the input array in ascending order in-place).
+        Explanation: 
+            This function performs the insertion sort algorithm on the given integer array 
+            in ascending order. It takes the input array and its length as parameters and 
+            modifies the array in-place to achieve the sorted order.
+    */
+    for (int i=1;i<length_of_array;i++) {
+        int current = integer_array[i];
+        int j = i-1;
+
+        while(integer_array[j]>current && j>=0) {
+            integer_array[j+1] = integer_array[j];
+            j--;
+        }
+        integer_array[j+1] = current;
+    }
+}
+
+// Lab01 : Generate magic square
+int** my_generate_magic_square(int length) {
+    /*
+        Input: 
+            - length (int): The size of the magic square (number of rows or columns as it'll be square matrix).
+        Output: 
+            - Returns a dynamically allocated 2D array representing the magic square (int**).
+        Explanation: 
+            This function generates a magic square of order 'length' using the Siamese method. 
+            It takes the size of the magic square as input and returns a dynamically allocated 2D array 
+            representing the generated magic square.
     */
 
     int** mat = (int**)malloc(length*sizeof(int*));

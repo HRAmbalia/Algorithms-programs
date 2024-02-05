@@ -75,7 +75,7 @@ int main() {
 
     /* ---------------------- METHOD 02 - Calls predefined function ---------------------- */
     /* This function will create magic square for given size and will return the pointer to that 2d function */
-    int** matrix = create_magic_square(length);
+    int** matrix = my_generate_magic_square(length);
     for (int i = 0; i < length; i++) {
         for (int j = 0; j < length; j++) {
             printf("%d ", matrix[i][j]);

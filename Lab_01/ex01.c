@@ -49,7 +49,7 @@ int main() {
     // }
     /* ---------------------- METHOD 02 - Calls predefined function ---------------------- */
     /* This function will sort the passed integer array, while printing array for each stage */
-    insertionSort(intList, length);
+    my_insertionSort_asc_for_integer_array(intList, length);
     /* ----------------------------------------------------------------------------------- */
 
     clock_gettime(CLOCK_MONOTONIC, &end);

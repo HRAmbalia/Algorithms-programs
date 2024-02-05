@@ -20,3 +20,5 @@ Lab_04/Lab04_manual.pdf
 
 # Ignore temporary directories
 temp/
+
+compile.sh

@@ -4,18 +4,21 @@
 /* ------------------------ EXTRA ------------------------ */ 
 
 // Simple summation of two integers
-int addNumbers(int a, int b);
+int addNumbers(int integer_01, int integer_02);
 
-// Simple array printing function
-void print_1d_array(int arr[], int size);
+// Function to print 1d integer array
+void my_print_1d_integer_array(int arr[], int size);
+
+// Function to print 2d integer array
+void my_print_2d_integer_array(int rows, int cols, int** arr);
 
 /* ------------------------ LAB 01 ------------------------ */ 
 
 // Lab01 : Insertions Sort
-void insertionSort(int arr[], int size);
+void my_insertionSort_asc_for_integer_array(int integer_array[], int length_of_array);
 
 // Lab01 : Magic Square
-int** create_magic_square(int length);
+int** my_generate_magic_square(int length);
 
 /* ------------------------ LAB 02 ------------------------ */ 
 
