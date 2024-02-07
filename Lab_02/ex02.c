@@ -62,7 +62,7 @@ int main() {
     printf("\n");
 
     // 
-    my_merge_sort_recursion(list, 0, length-1);
+    my_merge_sort_asc_recursion(list, 0, length-1);
     // 
     
     printf("After sorting :\n");

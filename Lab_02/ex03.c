@@ -64,7 +64,7 @@ int main() {
     printf("\n");
 
     // 
-    my_merge_sort_while(list, length);
+    my_merge_sort_asc_while(list, length);
     // 
 
     printf("After sorting :\n");

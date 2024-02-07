@@ -55,7 +55,7 @@ int main() {
 
     // 
     // my_quick_sort(list, 0, length-1);
-    void my_quick_sort_while(int arr[], int low, int high);
+    my_quick_sort_asc_while(list, 0, length-1);
     //
 
     printf("After sorting :\n");

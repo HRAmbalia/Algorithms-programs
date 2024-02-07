@@ -23,25 +23,25 @@ int** my_generate_magic_square(int length);
 /* ------------------------ LAB 02 ------------------------ */ 
 
 // Lab02 : Merge Sort using recursion
-void my_merge_sort_recursion(int arr[], int p, int r);
+void my_merge_sort_asc_recursion(int arr[], int p, int r);
 
 // Lab02 : Merge Sort using while
-void my_merge_sort_while(int arr[], int length);
+void my_merge_sort_asc_while(int arr[], int length);
 
 // Helper function for : merge_sort_recursion
-void merge_for_recursion_while(int list[], int low, int mid, int high);
+void _merge_for_recursion_while(int list[], int low, int mid, int high);
 
 // Lab02 : Quick Sort using recursion
-void my_quick_sort_recursion(int arr[], int low, int high);
+void my_quick_sort_asc_recursion(int arr[], int low, int high);
 
 // Lab02 : Quick Sort using while
-void my_quick_sort_while(int arr[], int low, int high);
+void my_quick_sort_asc_while(int arr[], int low, int high);
 
 // Helper function for : temp_partition
-void swap_two_variable(int *a, int *b);
+void my_swap_two_variable(int *a, int *b);
 
 // Helper function for : my_quick_sort
-int temp_partition(int arr[], int low, int high);
+int _temporary_partition(int arr[], int low, int high);
 
 /* ------------------------ LAB 03 ------------------------ */ 
 
@@ -59,7 +59,10 @@ void my_insertion_sort_for_integer_array(int arr[], int size, int order);
 
 /* ------------------------ LAB 04 ------------------------ */ 
 
-int my_01_knapsack_dynamic(int length, int weight[], int value[], int capacity, int **t);
-int** my_initialize_dynamic_memory(int n, int m);
+// Lab04 : 0/1 Knapsack Dynamic+Recursion
+int my_01_knapsack_dynamic_recursion(int length, int weight[], int value[], int capacity, int **t);
+
+// Helper function for : my_01_knapsack_dynamic_recursion
+int** my_initialize_2d_dynamic_memory(int n, int m);
 
 #endif

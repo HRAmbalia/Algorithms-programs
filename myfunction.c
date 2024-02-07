@@ -143,46 +143,68 @@ int** my_generate_magic_square(int length) {
 
 /* ------------------------------------- LAB 02 ------------------------------------- */
 
-// Merge Sort using recursion
-void my_merge_sort_recursion(int arr[], int p, int r) {
+// Merge Sort Ascending using recursion
+void my_merge_sort_asc_recursion(int arr[], int low, int high) {
     /*
-        Input : Integer array, integer low(p) & integer high(r)
-        Output : none
-        Explaination : This function will sort the integer array using recursion
+        Input : 
+            arr[]: An array of integers to be sorted.
+            p: The starting index of the subarray to be sorted.
+            r: The ending index of the subarray to be sorted.
+        Output : 
+            The array arr[] sorted in non-decreasing order.
+        Explanation : 
+            This function implements the recursive part of the merge sort algorithm.
+            It recursively divides the input array into two halves until each subarray has only one element.
+            Then it merges the sorted subarrays using the merge_for_recursion_while function.
     */
 
     int q;
-    if (p < r) {
-        q = (p + r) / 2;
-        my_merge_sort_recursion(arr, p, q);
-        my_merge_sort_recursion(arr, q+1, r);
-        merge_for_recursion_while(arr, p, q, r);
+    if (low < high) {
+        q = (low + high) / 2;
+        my_merge_sort_asc_recursion(arr, low, q);
+        my_merge_sort_asc_recursion(arr, q+1, high);
+        _merge_for_recursion_while(arr, low, q, high);
     }
 }
 
-// Merge Sort using while
-void my_merge_sort_while(int arr[], int length) {
-    /*
-        Input : Integer array, length of array
-        Output : none
-        Explaination : This function will sort the integer array using while loop & no recursion
+// Merge Sort Ascending using while
+void my_merge_sort_asc_while(int arr[], int length) {
+     /*
+        Input : 
+            arr[]: An array of integers to be sorted.
+            length: The number of elements in the array.
+        Output : 
+            The array arr[] sorted in non-decreasing order.
+        Explanation : 
+            This function implements the iterative version of the merge sort algorithm using a while loop.
+            It divides the array into subarrays of increasing size and merges them in sorted order using the _merge_for_recursion_while function.
+        Requirements : 
+            1. Function : void _merge_for_recursion_while(int list[], int low, int mid, int high){...}
+                Which does the merging for given array within given index
     */
 
     for (int i=1;i<=length-1;i=2*i) {
         for (int left_start=0;left_start<length-1;left_start+=2*i) {
             int mid = left_start+i-1;
             int right_end = (left_start+2*i-1<length-1) ? (left_start+2*i-1) : (length-1);
-            merge_for_recursion_while(arr, left_start, mid,right_end);
+            _merge_for_recursion_while(arr, left_start, mid,right_end);
         }
     }
 }
 
-// Helper function for merge_sort_recursion
-void merge_for_recursion_while(int list[], int low, int mid, int high) {
+// Helper function for : my_merge_sort_asc_recursion
+void _merge_for_recursion_while(int list[], int low, int mid, int high) {
     /*
-        Input : Integer array, integer low & integer mid & integer high
-        Output : none
-        Explaination : This is merge function which is helper function of merge_sort_recursion, which mergers the two sorted integer array
+        Input : 
+            list[]: An array of integers to be merged.
+            low: The starting index of the first subarray.
+            mid: The ending index of the first subarray and the starting index of the second subarray.
+            high: The ending index of the second subarray.
+        Output : 
+            The array list[] merged in non-decreasing order.
+        Explanation : 
+            This function merges two sorted subarrays list[low..mid] and list[mid+1..high] into a single sorted array.
+            It uses a while loop to merge the elements in place without using extra memory.
     */
 
     int n1 = mid-low+1;
@@ -219,27 +241,43 @@ void merge_for_recursion_while(int list[], int low, int mid, int high) {
 }
 
 
-// Quick Sort using recursion
-void my_quick_sort_recursion(int arr[], int low, int high) {
+// Quick Sort Ascending using recursion
+void my_quick_sort_asc_recursion(int integer_array[], int low, int high) {
     /*
-        Input : Integer array, integer low & integer high, index from array
-        Output : none
-        Explaination : This function will sort the integer array using recursion
+        Input : 
+            arr[]: An array of integers to be sorted.
+            low: The starting index of the subarray to be sorted.
+            high: The ending index of the subarray to be sorted.
+        Output : 
+            The array arr[] sorted in non-decreasing order.
+        Explanation : 
+            This function implements the recursive part of the quick sort algorithm.
+            It selects a pivot element from the array and partitions the array such that elements smaller than the pivot are placed before it,
+            and elements greater than the pivot are placed after it.
+            Then, it recursively sorts the subarrays before and after the pivot.
+        Requirements : 
+            1. Function : int _temporary_partition(int arr[], int low, int high){...}
+                Which returns the correct pivot position index.
     */
    
     if (low<high) {
-        int pivot = temp_partition(arr, low, high);
-        my_quick_sort_recursion(arr, low, pivot-1);
-        my_quick_sort_recursion(arr, pivot+1, high);
+        int pivot = _temporary_partition(integer_array, low, high);
+        my_quick_sort_asc_recursion(integer_array, low, pivot-1);
+        my_quick_sort_asc_recursion(integer_array, pivot+1, high);
     }
 }
 
-// Quick Sort using while
-void my_quick_sort_while(int arr[], int low, int high) {
+// Quick Sort Ascending using while
+void my_quick_sort_asc_while(int integer_array[], int low, int high) {
     /*
-        Input : Integer array, integer low & integer high, index from array
-        Output : none
-        Explaination : This function will sort the integer array using recursion
+        Input : integer_array[]: An array of integers to be sorted.
+                low: The starting index of the subarray to be sorted.
+                high: The ending index of the subarray to be sorted.
+        Output : None
+        Explanation : This function will sort the integer_array[] using recursion.
+        Requirements : 
+            1.  Function : int _temporary_partition(int arr[], int low, int high){...}
+                Which returns the correct pivot position index.
     */
    
     int stack[high-low+1];
@@ -249,7 +287,7 @@ void my_quick_sort_while(int arr[], int low, int high) {
     while (top >= 0) {
         high = stack[top--];
         low = stack[top--];
-        int pivot = temp_partition(arr, low, high);
+        int pivot = _temporary_partition(integer_array, low, high);
         if (pivot-1>=low) {
             stack[++top] = low;
             stack[++top] = pivot-1;
@@ -261,12 +299,12 @@ void my_quick_sort_while(int arr[], int low, int high) {
     }
 }
 
-// Helper function for temp_partition
-void swap_two_variable(int *a, int *b) {
+// Helper function for : _temporary_partition
+void my_swap_two_variable(int *a, int *b) {
     /*
-        Input : Two integer passed by reference
-        Output : none
-        Explaination : This function will swap the values of two variables passed
+        Input : Pointers to two integer variables, a and b.
+        Output : None
+        Explanation : This function swaps the values of the variables pointed to by a and b.
     */
 
     int t = *a;
@@ -274,12 +312,23 @@ void swap_two_variable(int *a, int *b) {
     *b = t;
 }
 
-// Helper function for my_quick_sort(Last element as PIVOT)
-int temp_partition(int arr[], int low, int high) {
+// Helper function for : my_quick_sort_asc_while(Last element as PIVOT)
+int _temporary_partition(int arr[], int low, int high) {
     /*
-        Input : Integer array, integer low & integer high, index from array
-        Output : integer, new index for the pivot element
-        Explaination : This function will put the pivot element at it's correct position in array
+        Input : 
+            arr[]: An array of integers to be partitioned.
+            low: The starting index of the subarray to be partitioned.
+            high: The ending index of the subarray to be partitioned.
+        Output :
+            Returns the index of the pivot element after partitioning.
+        Explanation : 
+            This function partitions the array into two halves around a pivot element.
+            It selects the last element (arr[high]) as the pivot.
+            Elements smaller than or equal to the pivot are moved to the left side of the pivot, and elements greater than the pivot are moved to the right side.
+            Finally, it returns the index of the pivot element after partitioning.
+        Requirements : 
+            1.  function : void my_swap_two_variable(int *a, int *b){...}
+                to swap two variables
     */
 
     int pivot = arr[high];
@@ -287,10 +336,10 @@ int temp_partition(int arr[], int low, int high) {
     for (int i=low;i<high;i++) {
         if(arr[i]<=pivot) {
             o = o+1;
-            swap_two_variable(&arr[o], &arr[i]);
+            my_swap_two_variable(&arr[o], &arr[i]);
         }
     }
-    swap_two_variable(&arr[o+1], &arr[high]);
+    my_swap_two_variable(&arr[o+1], &arr[high]);
     return (o+1);
 }
 
@@ -299,13 +348,21 @@ int temp_partition(int arr[], int low, int high) {
 // Lab 03 : Knapsack problem
 float my_fractional_knapsack_greedy(int length, float weight[], float profit[], float knapsack) {
     /*
-        Input : integer length of array(length), float Capasity(knapsack), float array weight, float profit
-        Output : Float value(max profit)
-        Explaination : This function will use greedy method to find the max profit for knapsack problem.
+        Input : 
+            length: The number of items available.
+            weight[]: An array of floats representing the weights of items.
+            profit[]: An array of floats representing the profits of items.
+            knapsack: The maximum weight the knapsack can hold.
+        Output : 
+            Returns the total profit obtained by selecting items optimally.
+        Explanation : 
+            This function solves the fractional knapsack problem using a greedy approach.
+            It calculates the profit-to-weight ratio for each item, sorts the items based on this ratio,
+            and selects items one by one until the knapsack is full.
+            If an item cannot be selected completely, it takes a fractional part of it to maximize profit.
         Requirement : 
-            1.  Function named following : Which takes 1 integer length + 3 arrays as input, sorting is done based on the first array, Indices of array2 and array3 are shuffeled accordingly.
-                void _sort_with_multiple_array(int length, float sort_by_this_value[], float arr1[], float arr2[], int order)
-
+            1.  Function : void _sort_with_multiple_array(int length, float sort_by_this_value[], float arr1[], float arr2[], int order){...}
+                Which takes 1 integer length + 3 arrays as input, sorting is done based on the first array, Indices of array2 and array3 are shuffeled accordingly.  
     */
 
     // Finding profit/weight ratio
@@ -333,12 +390,17 @@ float my_fractional_knapsack_greedy(int length, float weight[], float profit[], 
 // Helper function for : Knapsack problem
 void _sort_with_multiple_float_array(int length, float sort_by_this_value[], float arr1[], float arr2[], int order) {
     /*
-        Input: Integer length of array (All arrays should be of the same size and float type),
-               float array to sort by, float arrays to shuffle accordingly,
-               int order (0 for ascending, 1 for descending)
-        Output: Void
-        Explanation: This function performs sorting based on the specified order.
-        Requirement: None
+        Input: 
+            length: The length of arrays.
+            sort_by_this_value[]: An array of floats to be sorted based on this value.
+            arr1[]: Another array of floats to be rearranged along with sort_by_this_value[].
+            arr2[]: Third array of floats to be rearranged along with sort_by_this_value[].
+            order: Specifies the sorting order. Use 0 for ascending or 1 for descending.
+        Output: 
+            None
+        Explanation:
+            This function sorts the arrays arr1[] and arr2[] based on the values in sort_by_this_value[].
+            It sorts the arrays in either ascending or descending order, depending on the value of the 'order' parameter.
     */
 
     if( order!=0 && order!=1 ) {
@@ -368,10 +430,20 @@ void _sort_with_multiple_float_array(int length, float sort_by_this_value[], flo
 // Lab03 : Making change Greedy method
 void my_making_change_greedy(int length, int coins_array[], int capacity) {
     /*
-        Input : Integer length of array(length), Integer array(coins_array), Integer Capacity
-        Output : Void
-        Explaination : This Function will use the greedy method to print the changes
+        Input : 
+            length: The number of different types of coins available.
+            coins_array[]: An array of integers representing the denominations of coins available.
+            capacity: The amount for which change needs to be made.
+        Output : 
+            None
+        Explanation : 
+            This function calculates the change for a given amount using a greedy approach.
+            It iterates through the coins_array[] from the highest denomination to the lowest,
+            and at each step, it determines the maximum number of coins of that denomination that can be used
+            without exceeding the capacity.
+            It prints the number of coins of each denomination required to make the change.
     */
+
 
     // int count_of_coins = 0;
     int temp_value = 0;
@@ -393,9 +465,17 @@ void my_making_change_greedy(int length, int coins_array[], int capacity) {
 // Helper function for : my_making_change_greedy
 void my_insertion_sort_for_integer_array(int arr[], int size, int order) {
     /*
-        Input: integer Array, Integer length of the array, Integer order (0 for ascending, 1 for descending)
-        Output: void
-        Explanation: This function will sort the given array based on the specified order.
+        Input: 
+            arr[]: An array of integers to be sorted.
+            size: The size of the array.
+            order: Specifies the sorting order. Use 0 for ascending or 1 for descending.
+        Output: 
+            None
+        Explanation: 
+            This function sorts the array arr[] using the insertion sort algorithm.
+            It sorts the array in either ascending or descending order, depending on the value of the 'order' parameter.
+            If 'order' is 0, the array is sorted in ascending order.
+            If 'order' is 1, the array is sorted in descending order.
     */
 
     if( order!=0 && order!=1 ) {
@@ -419,7 +499,7 @@ void my_insertion_sort_for_integer_array(int arr[], int size, int order) {
 /* ------------------------------------- LAB 04 ------------------------------------- */
 
 // Lab04 : 0/1 Knapsack problem Dynamic
-int my_01_knapsack_dynamic(int length, int weight[], int value[], int capacity, int **t) {
+int my_01_knapsack_dynamic_recursion(int length, int weight[], int value[], int capacity, int **t) {
     /*
         Input: 
             - length (int): The number of items available for the knapsack problem.
@@ -444,8 +524,8 @@ int my_01_knapsack_dynamic(int length, int weight[], int value[], int capacity, 
     }
 
     else if( weight[length-1]<=capacity ) {
-        int temp1 = value[length-1] + my_01_knapsack_dynamic(length-1, weight, value, capacity-weight[length-1], t);
-        int temp2 = my_01_knapsack_dynamic(length-1, weight, value, capacity, t);
+        int temp1 = value[length-1] + my_01_knapsack_dynamic_recursion(length-1, weight, value, capacity-weight[length-1], t);
+        int temp2 = my_01_knapsack_dynamic_recursion(length-1, weight, value, capacity, t);
         if(temp1<temp2) {
             t[length][capacity] = temp2;
             return temp2;
@@ -456,14 +536,14 @@ int my_01_knapsack_dynamic(int length, int weight[], int value[], int capacity, 
         }
     }
     else if(weight[length-1]>capacity) {
-        int temp2 = my_01_knapsack_dynamic(length-1, weight, value, capacity, t);
+        int temp2 = my_01_knapsack_dynamic_recursion(length-1, weight, value, capacity, t);
         t[length][capacity] = temp2;
         return temp2;
     }
 }
 
 // Function to generate dynamic_memory of size n*m
-int** my_initialize_dynamic_memory(int n, int m) {
+int** my_initialize_2d_dynamic_memory(int n, int m) {
     /*
         Input: 
             - n (int): Integer representing the number of rows in the 2D array (matrix).

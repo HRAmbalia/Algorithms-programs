@@ -72,9 +72,9 @@ int main() {
     int m = 8;
     int weight[] = {2, 3, 4, 5};
     int profit[] = {10, 20, 50, 60};
-    int **t = my_initialize_dynamic_memory(n, m);
+    int **t = my_initialize_2d_dynamic_memory(n, m);
 
-    int temp = my_01_knapsack_dynamic(n, weight, profit, m, t);
+    int temp = my_01_knapsack_dynamic_recursion(n, weight, profit, m, t);
     printf("Max Profit : %d\n", temp);
 
     // for (int i=0;i<n;i++){

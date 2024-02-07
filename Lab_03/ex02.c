@@ -58,7 +58,7 @@
 int main() {
     int length = 5;
     int coins_array[] = {2, 5, 10, 25, 50};
-    int capacity = 142;
+    int capacity = 141;
     printf("capacity : %d\n", capacity);
     printf("coin Are : ");
     for( int i=0;i<length;i++ ) {

@@ -34,7 +34,7 @@ int main() {
     int list[] = {1222, 13, 26, 78, 89, 10, 14, 21, 28, 36, 48};
     int length = 11;
 
-    printf("Merge sort using While loop(Using recursion)\n");
+    printf("Quick sort using While loop(Using recursion)\n");
 
     printf("Before sorting :\n");
     for (int i=0;i<length;i++)
@@ -42,7 +42,7 @@ int main() {
     printf("\n");
 
     // 
-    my_quick_sort_recursion(list, 0, length-1);
+    my_quick_sort_asc_recursion(list, 0, length-1);
     // 
 
     printf("After sorting :\n");
