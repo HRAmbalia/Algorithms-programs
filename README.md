@@ -19,6 +19,19 @@ This repository contains various algorithm implementations in C.
     -   0/1 Knapsack Problem
     -   Assembly line Scheduling Problem
 
+* **Lab 05: Prim's and String edit distance**
+    -   Prim's algorithm
+    -   String edit distance
+
+* **Lab 06: Traversal techniques**
+    -   BFS traversal
+    -   DFS Traversal
+
+* **Lab 07: Graph sorting & Articulation point**
+    -   Topological Sort using DFS
+    -   Topological sort using source removal
+    -   Find articulation point
+
 ## Key Files
 
 * **HRA.h:** Header file containing algorithm-related functions and definitions.

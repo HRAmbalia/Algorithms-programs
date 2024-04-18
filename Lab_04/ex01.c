@@ -4,7 +4,7 @@
 #include <stdlib.h>
 #include "/home/hr/Documents/Semester_10/Lab_DAA/HRA.h"
 
-// int** my_initialize_dynamic_memory(int n, int m) {
+// int** my_initialize_2d_dynamic_memory(int n, int m) {
 //     /*
 //         Input: 
 //             - n (int): Integer representing the number of rows in the 2D array (matrix).
@@ -24,7 +24,7 @@
 //     return t;
 // }
 
-// int my_01_knapsack_dynamic(int length, int weight[], int value[], int capacity, int **t) {
+// int my_01_knapsack_dynamic_recursion(int length, int weight[], int value[], int capacity, int **t) {
 //     /*
 //         Input: 
 //             - length (int): The number of items available for the knapsack problem.
@@ -49,8 +49,8 @@
 //     }
 
 //     else if( weight[length-1]<=capacity ) {
-//         int temp1 = value[length-1] + my_01_knapsack_dynamic(length-1, weight, value, capacity-weight[length-1], t);
-//         int temp2 = my_01_knapsack_dynamic(length-1, weight, value, capacity, t);
+//         int temp1 = value[length-1] + my_01_knapsack_dynamic_recursion(length-1, weight, value, capacity-weight[length-1], t);
+//         int temp2 = my_01_knapsack_dynamic_recursion(length-1, weight, value, capacity, t);
 //         if(temp1<temp2) {
 //             t[length][capacity] = temp2;
 //             return temp2;
@@ -61,17 +61,17 @@
 //         }
 //     }
 //     else if(weight[length-1]>capacity) {
-//         int temp2 = my_01_knapsack_dynamic(length-1, weight, value, capacity, t);
+//         int temp2 = my_01_knapsack_dynamic_recursion(length-1, weight, value, capacity, t);
 //         t[length][capacity] = temp2;
 //         return temp2;
 //     }
 // }
 
 int main() {
-    int n = 4;
-    int m = 8;
-    int weight[] = {2, 3, 4, 5};
-    int profit[] = {10, 20, 50, 60};
+    int n = 5;
+    int m = 50;
+    int profit[] = {60, 100, 120, 80, 219};
+    int weight[] = {10, 20, 30, 60, 49};
     int **t = my_initialize_2d_dynamic_memory(n, m);
 
     int temp = my_01_knapsack_dynamic_recursion(n, weight, profit, m, t);

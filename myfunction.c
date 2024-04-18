@@ -1,6 +1,8 @@
 #include "HRA.h" 
 #include <stdio.h>
 #include <stdlib.h>
+#include <stdbool.h>
+#define INF 99999
 
 // Demo Summation function
 int addNumbers(int integer_01, int integer_02) {
@@ -50,6 +52,26 @@ void my_print_2d_integer_array(int rows, int cols, int** arr) {
     for( int i=0;i<rows;i++ ) {
         for( int j=0;j<cols;j++ ) {
             printf("%d\t", arr[i][j]);
+        }
+        printf("\n");
+    }
+}
+
+void my_print_2d_matrix(int n, int graph[n][n]) {
+    /*
+        Input:
+            n (int): Size of the graph.
+            graph (int[n][n]): 2D array representing the graph.
+        Output:
+            void (prints the graph to the console).
+        Explanation:
+            This function prints the elements of the graph (2D array) to the console.
+    */
+
+    // Iterate over each row
+    for (int i = 0; i < n; i++) {
+        for (int j = 0; j < n; j++) {
+            printf("%d\t", graph[i][j]);
         }
         printf("\n");
     }
@@ -561,5 +583,516 @@ int** my_initialize_2d_dynamic_memory(int n, int m) {
         }
     }
     return t;
+}
+
+/* ------------------------------------- LAB 05 ------------------------------------- */
+
+// Lab05 : Prim's algorithm
+void my_prims_algorithm(int cost[], int parent[], int vertices, int graph[vertices][vertices] ) {
+    /*
+        Input:
+            cost[]: array to store the minimum cost to reach each vertex from the starting vertex
+            parent[]: array to store the parent of each vertex in the minimum spanning tree
+            vertices: number of vertices in the graph
+            graph[][]: adjacency matrix representing the weighted graph
+        
+        Output:
+            Prints the minimum spanning tree in the format of edges and their corresponding weights
+        
+        Explanation:
+            For start node = 0
+            This function implements Prim's algorithm to find the minimum spanning tree of a weighted undirected graph.
+            Prim's algorithm grows a single tree (or forest) by adding vertices to the minimum spanning tree one at a time, starting from an arbitrary vertex.
+            At each step, it selects the edge with the minimum weight that connects a vertex in the minimum spanning tree to a vertex outside of it.
+            The function updates the cost array with the minimum cost to reach each vertex and the parent array with the parent of each vertex in the minimum spanning tree.
+            Finally, it prints the edges and their corresponding weights to represent the minimum spanning tree.
+    */
+    int start = 0;
+    cost[start] = 0;
+    parent[start] = -1;
+    int isVisited[vertices];
+    for( int i=0;i<vertices;i++ ) {
+        isVisited[i] = 0;
+    }
+
+    for( int v=0;v<vertices-1;v++ ) {
+        int minCost = INF, minIndex;
+        for( int i=0;i<vertices;i++ )  {
+            if( isVisited[i]==0 && cost[i]<minCost ) {
+                minCost = cost[i];
+                minIndex = i;
+            }
+        }
+
+        isVisited[minIndex] = 1;
+
+        for( int i=0;i<vertices;i++ ) {
+            if (graph[minIndex][i] && isVisited[i]==0 && graph[minIndex][i]<cost[i] ) {
+                parent[i] = minIndex;
+                cost[i] = graph[minIndex][i];
+            }
+        }
+    }
+
+    printf("Edge\tWeight\n");
+    for( int i=1;i<vertices;i++ ) {
+        printf("%d - %d \t%d \n", parent[i], i, graph[i][parent[i]]);
+    }
+}
+
+// Lab05 : Find minimum string edit distance
+int my_minimum_edit_string_distance(char *init_string, char *final_string, int init_length, int final_length, int **memo) {
+
+    /*
+        Input:
+            - init_string: Pointer to the initial string (character array).
+            - final_string: Pointer to the final string (character array).
+            - init_length: Length of the initial string.
+            - final_length: Length of the final string.
+            - memo: Pointer to a 2D integer array used for memoization (optional for efficiency).
+
+        Output:
+            - The minimum number of edit operations (insertions, deletions, or replacements) required to transform the initial string into the final string.
+
+        Explanation:
+            This function implements a dynamic programming (DP) approach to calculate the edit distance between two strings. It considers three operations:
+                - Insertion: Insert a character into the initial string.
+                - Deletion: Delete a character from the initial string.
+                - Replacement: Replace a character in the initial string.
+
+            The function works by recursively breaking down the problem into smaller subproblems. It uses memoization (optional) to store previously computed results and avoid redundant calculations.
+    */
+
+    // Base cases
+    if (init_length == 0)
+        return final_length;
+    if (final_length == 0)
+        return init_length;
+
+    // If already computed, return memoized value
+    if (memo[init_length][final_length] != -1)
+        return memo[init_length][final_length];
+
+    // If last characters are same, ignore last characters and recur for remaining strings
+    if (init_string[init_length - 1] == final_string[final_length - 1])
+        return memo[init_length][final_length] = my_minimum_edit_string_distance(init_string, final_string, init_length-1, final_length-1, memo);
+
+    // If last characters are not same, consider all three operations
+    return memo[init_length][final_length] = 1 + my_minimum_of_three_integer(
+        my_minimum_edit_string_distance(init_string, final_string, init_length, final_length-1, memo), // Insert
+        my_minimum_edit_string_distance(init_string, final_string, init_length-1, final_length, memo), // Remove
+        my_minimum_edit_string_distance(init_string, final_string, init_length-1, final_length-1, memo) // Replace
+    );
+}
+
+// Helper function for : my_minimum_edit_string_distance
+int my_minimum_of_three_integer(int x, int y, int z) {
+    if (x <= y && x <= z) return x;
+    if (y <= x && y <= z) return y;
+    return z;
+}
+
+/* ------------------------------------- LAB 06 ------------------------------------- */
+
+// Lab06 : BFS traversal
+void my_bfs_traversal(int start, int length, int graph[length][length], int parent[length]) {
+    /*
+        Input:
+            - start: The starting node for the BFS traversal (integer).
+            - length: The number of vertices in the graph (integer).
+            - graph: A 2D integer array representing the adjacency matrix of the graph. `graph[i][j]` indicates an edge between node `i` and node `j` (1 or 0).
+            - parent: A 1D integer array to store the parent node for each visited node during the BFS traversal (used for path reconstruction if needed).
+
+        Output:
+            - The function performs a Breadth-First Search (BFS) traversal on the provided graph starting from the `start` node.
+            - It prints the visited nodes and the queue contents at each step for visualization (can be removed for a cleaner output).
+
+        Explanation:
+            This function implements a Breadth-First Search (BFS) algorithm to explore a connected graph. It uses a queue to maintain the order of node exploration.
+
+            1. Initialization:
+                - A queue is declared with a size sufficient to hold all possible edges (length * (length - 1)) / 2 (assuming an undirected graph).
+                - `front` and `rear` pointers are used to manage the queue (initially `front = 0` and `rear = -1`).
+                - A visited array (`visited`) is initialized to `0` for all nodes, indicating they haven't been visited yet.
+
+            2. Start Node Enqueueing:
+                - `rear` is incremented and the starting node (`start`) is added to the queue.
+                - The starting node is marked as visited in the `visited` array.
+
+            3. BFS Traversal:
+                - A loop continues as long as there are elements in the queue (`front <= rear`).
+                    - The current node being processed is retrieved from the front of the queue (`queue[front]`), incremented by 1 for user-friendly output (starting from 1), and printed.
+                    - The visited nodes and queue contents are printed for visualization (can be replaced with your desired output).
+                    - `front` is incremented to remove the processed node from the queue.
+
+                4. Explore Adjacent Nodes:
+                    - For each neighbor (`i`) of the current node:
+                        - If there's an edge (`graph[current][i] == 1`) and the neighbor hasn't been visited (`!visited[i]`), perform the following:
+                            - Add the neighbor (`i`) to the queue (`rear` is incremented and the neighbor is added).
+                            - Mark the neighbor as visited (`visited[i] = 1`).
+                            - Set the parent of the neighbor (`parent[i]`) to the current node (`current`), indicating the exploration path.
+                            - Print a message indicating the newly discovered edge.
+
+    This function provides a step-by-step BFS traversal of the graph, allowing you to visualize the exploration process. The `parent` array can be used to reconstruct the path from the starting node to any reached node if needed. 
+    */
+
+    int queue[(length*(length-1))/2];
+    int front = 0;
+    int rear = -1;
+    int visited[9];
+    for( int i=0;i<length;i++ ) 
+        visited[i] = 0; 
+
+    rear++;
+    queue[rear] = start;
+    visited[start] = 1;
+
+    while( front<=rear ) {
+
+        printf("\nVisited array: ");
+        my_print_1d_integer_array(visited, length);
+
+        printf("Queue : ");
+        for( int i=front;i<=rear;i++ ) {
+            printf("%d ", queue[i]+1);
+        }
+        printf("\n");
+
+        int current = queue[front++];
+        printf("Visiting node(front of the queue) : %d\n", current+1);
+
+        // Explore adjacent nodes of current
+        for( int i=0;i<length;i++ ) {
+            if( graph[current][i] && !visited[i] ) {
+                rear++;
+                queue[rear] = i; // Add adjacent nodes to the queue
+                visited[i] = 1; // Node is now visited
+                parent[i] = current;// As we reached from curent to this node
+                printf("Adding edge: (%d, %d)\n", current+1, i+1);
+            }
+        }
+    }
+}
+
+// Lab06 : DFS traversal
+void my_dfs_traversal(int start, int length, int **graph, int *parent) {
+    /*
+        Input: 
+            - start: The starting node for DFS traversal.
+            - length: The number of nodes in the graph.
+            - graph: A 2D array representing the graph's adjacency matrix.
+            - parent: An array to store the parent node for each node visited during traversal.
+        Output: None (Output is printed directly)
+        Explanation: Performs Depth-First Search (DFS) traversal on a graph represented by an adjacency matrix.
+    */
+
+    int stack[(length * (length - 1)) / 2];
+    int top = -1;
+    int visited[9];
+    for (int i = 0; i < length; i++)
+        visited[i] = 0;
+
+    top++;
+    stack[top] = start;
+    visited[start] = 1;
+
+    printf("DFS Traversal order :\n");
+
+    while (top >= 0) {
+
+        printf("\nVisited array: ");
+        my_print_1d_integer_array(visited, length);
+
+        printf("Stack : ");
+        for (int i = 0; i <= top; i++)
+        {
+            printf("%d ", stack[i] + 1);
+        }
+        printf("\n");
+
+        int found = 0;
+        // Visiting each node : O(n)
+        int current = stack[top];
+        printf("Visiting node(top of the stack) : %d\n", current + 1);
+        top--; // This is not correct, we shouldn't have to pop at this point
+
+        // Exploring adjacent nodes of current
+        for (int i = 0; i < length; i++)
+        {
+            // Visiting adjucent nodes for each vertices : O()
+            if (graph[current][i] && !visited[i])
+            {
+                top++;
+                stack[top] = i;      // Add adjecent nodes to stack
+                visited[i] = 1;      // Node is now visited
+                parent[i] = current; // As we reached from curent to this node
+                found = 1;
+                printf("Adding edge: (%d, %d)\n", current + 1, i + 1);
+                break;
+            }
+        }
+        if (!found)
+            top--;
+    }
+
+    printf("\nDFS Spanning Tree :\n");
+    for (int i = 0; i < length; i++)
+        if (parent[i] != -1)
+            printf("(%d, %d)\n", parent[i] + 1, i + 1);
+}
+
+/* ------------------------------------- LAB 07 ------------------------------------- */
+
+// Lab07 : Topological Sort using DFS
+void my_topological_sort_using_dfs(int length, int graph[length][length]) {
+    /*
+        Input: 
+            - length: the number of nodes in the graph
+            - graph: a 2D array representing the adjacency matrix of the graph
+                     where graph[i][j] = 1 if there is an edge from node i to node j, 0 otherwise
+        Output: 
+        Explanation: 
+            - This function performs a topological sort on a directed acyclic graph (DAG) using depth-first search (DFS).
+            - It prints the nodes in the order they are visited during DFS, which represents a topological ordering.
+        Requirement : 
+            - The graph must be represented using an adjacency matrix.
+            - Another function '_dfs_for_topological_sort(int start, int length, int graph[length][length], int *global_visited)' is required as helper function for this program
+    */
+    int global_visited[length];
+    for( int i=0;i<length;i++ )
+        global_visited[i] = 0;
+    for( int i=0;i<length;i++ ) {
+        if( global_visited[i]==0 ) {
+            printf("\nStarting DFS from node %d\n", i+1);
+            _dfs_for_topological_sort(i, length, graph, global_visited);
+        }
+    }
+}
+
+// Helper function for : my_topological_sort_using_dfs
+void _dfs_for_topological_sort(int start, int length, int graph[length][length], int *global_visited) {
+    /*
+        Input: 
+            - start: The starting node for DFS traversal.
+            - length: The number of nodes in the graph.
+            - graph: A 2D array representing the graph's adjacency matrix.
+            - global_visited: An array indicating nodes visited across different invocations.
+        Output: None (Output is printed directly)
+        Explanation: Performs Depth-First Search (DFS) traversal on a graph represented by an adjacency matrix.
+        Requirement : This function is required for another function, `my_topological_sort_using_dfs`,
+            which depends on this function being defined.
+    */
+    int visited[length];
+    for( int i=0;i<length;i++ ) {
+        visited[i] = global_visited[i];
+    }
+    int stack[(length*(length-1))/2];
+    int top = -1;
+    top++;
+    stack[top] = start;
+    visited[start] = 1;
+    while( top!=-1 ) {
+        int current = stack[top];
+        printf("Visiting node : %d\n", current+1);
+        top--;
+        for( int i=0;i<length;i++ ) {
+            if (graph[current][i] && !visited[i]) {
+                top++;
+                stack[top] = i; // Add adjecent nodes to stack
+                visited[i] = 1; // Node is now visited
+                printf("Adding node %d to stack\n", i+1);
+            }
+        }
+    }
+    for( int i=0;i<length;i++ ) {
+        global_visited[i] = visited[i];
+    }
+}
+
+// Lab07 : Topological sort using source removal
+void my_topological_sort_using_source_removal(int length, int *indegree, int graph[length][length]) {
+    /*
+        Input : 
+            - length: the number of nodes in the graph
+            - indegree: an array representing the indegree of each node in the graph
+            - graph: a 2D array representing the adjacency matrix of the graph
+                     where graph[i][j] = 1 if there is an edge from node i to node j, 0 otherwise
+        Output : 
+        Explanation : 
+            - This function performs a topological sort on a directed acyclic graph (DAG) using the source removal algorithm.
+            - It deletes nodes with indegree 0 iteratively until all nodes are visited.
+        Requirement : 
+            - _deleted_node(int length, int node, int *indegree, int graph[length][length]) must be defined which will modify the indegree array and update the graph by removing edges.
+            - void _find_indegree(int length, int graph[length][length], int *indegree) must be defined which will calculate the indegree of each node in the graph.
+    */
+
+    int visited[length];
+    for( int i=0;i<length;i++ ) {
+        visited[i] = 0;
+    }
+
+    while(1) {
+        int temp = 0;
+        for( int i=0;i<length;i++ ) {
+            if(indegree[i]==0 && visited[i]==0){
+                printf("deleting node : %d\n", i+1);
+                _deleted_node(length, i, indegree, graph);
+                visited[i] = 1;
+                temp = 1;
+            }
+        }
+        if(temp==0) {
+            break;
+        }
+    }
+}
+
+// Helper function for : my_topological_sort_using_source_removal
+void _find_indegree(int length, int graph[length][length], int *indegree) {
+    /*
+        Input : 
+            - length: the number of nodes in the graph
+            - graph: a 2D array representing the adjacency matrix of the graph
+            - indegree: an array representing the indegree of each node in the graph
+                      (modified in this function)
+        Output : None
+        Explanation : 
+            - This function calculates the indegree of each node in the graph.
+        Requirement : None
+    */
+    for( int i=0;i<length;i++ ) {
+        for( int j=0;j<length;j++ ) {
+            if( graph[i][j]==1 ) {
+                indegree[j]++;
+            }
+        }
+    }
+}
+
+// Helper function for : my_topological_sort_using_source_removal
+void _deleted_node(int length, int node, int *indegree, int graph[length][length]) {
+    /*
+        Input : 
+            - length: the number of nodes in the graph
+            - node: the node to be deleted
+            - indegree: an array representing the indegree of each node in the graph
+                      (modified in this function)
+            - graph: a 2D array representing the adjacency matrix of the graph
+                     (modified in this function)
+        Output : 
+        Explanation : 
+            This function updates the indegree array and the graph by removing edges incident on the given node.
+        Requirement : None
+    */
+    for( int i=0;i<length;i++ ) {
+        if(graph[node][i]==1) {
+            indegree[i]--;
+        }
+    }
+}
+
+// Lab07 : 
+void my_articulation_point(int length, int **graph, int V, int is_ap[]) {
+    /*
+        Input :
+            - length: The number of nodes in the graph.
+            - graph: An adjacency matrix representing the graph.
+            - V: The number of vertices in the graph.
+            - is_ap[]: An array to mark nodes as articulation points.
+        Output :
+            No explicit output. The function updates the is_ap[] array to mark articulation points.
+        Explanation : 
+            This function identifies articulation points (AP) in a graph using Depth First Search (DFS).
+            It initializes arrays for tracking visited nodes, discovery times, lowest discovery times, and parent nodes.
+            Then, it iterates through each vertex in the graph, performing DFS if the vertex is not already visited.
+            The DFS function (_DFS_to_find_articulation_point) is called for each unvisited vertex to identify articulation points.
+        Requirement : 
+            - function _DFS_to_find_articulation_point(length, graph, i, visited, disc_time, lowest_disc_time, parent, is_ap) which is used to perform DFS to find articulation points.
+    */
+    int visited[length];
+    int disc_time[length];
+    int lowest_disc_time[length];
+    int parent[length];
+    
+    for( int i=0;i<V;i++ ) {
+        parent[i] = -1;
+        visited[i] = false;
+        is_ap[i] = false;
+    }
+    
+    for( int i=0;i<V;i++ )
+        if (!visited[i])
+            _DFS_to_find_articulation_point(length, graph, i, visited, disc_time, lowest_disc_time, parent, is_ap);
+}
+
+// 
+int my_minimum_of_two_integer(int a, int b) {
+    return (a<b) ? a:b;
+}
+
+// 
+void _DFS_to_find_articulation_point(int length, int **graph, int node, int visited[], int disc_time[], int lowest_disc_time[], int parent[], int is_ap[]) {
+    /*
+        Input:
+            - length: The number of nodes in the graph.
+            - graph: An adjacency matrix representing the graph.
+            - node: The current node being visited during DFS traversal.
+            - visited[]: An array to keep track of visited nodes.
+            - disc_time[]: An array to store the discovery time of each node.
+            - lowest_disc_time[]: An array to store the lowest discovery time reachable from each node.
+            - parent[]: An array to store the parent of each node in the DFS traversal tree.
+            - is_ap[]: An array to mark nodes as articulation points.
+            
+        Output:
+            No explicit output. The function updates various arrays (disc_time[], lowest_disc_time[], parent[], is_ap[]) to store information about the graph and articulation points.
+        
+        Explanation:
+            - This function implements Depth First Search (DFS) to traverse a graph and identify articulation points (AP).
+            - It starts by initializing some variables and marking the current node as visited.
+            - Then, it updates the discovery time and lowest discovery time of the current node.
+            - The function iterates over all adjacent nodes of the current node.
+                - If an adjacent node is not visited, it recursively calls DFS on that node, marking the current node as its parent.
+                - It updates the lowest discovery time of the current node based on the child's lowest discovery time.
+                - If the current node is the root of the DFS tree and has more than one child, it's marked as an articulation point.
+                - If the current node is not the root and the lowest discovery time of the child is greater than or equal to the discovery time of the current node, it's marked as an articulation point.
+                - If the adjacent node is already visited and not the parent of the current node, it updates the lowest discovery time of the current node based on the adjacent node's discovery time.
+            - The function does not return any explicit value but updates various arrays to reflect the DFS traversal and identify articulation points.
+    */
+
+    static int time = 0;
+    int children = 0;
+    visited[node] = 1;
+    disc_time[node] = lowest_disc_time[node] = ++time;
+    
+    printf("\nVisiting node %d\n", node);
+    printf("Updated disc_time[%d] = %d\n", node, disc_time[node]);
+    printf("Updated lowest_disc_time[%d] = %d\n", node, lowest_disc_time[node]);
+
+    for( int v=0;v<length;v++ ) {
+        if( graph[node][v] ) {
+            if ( !visited[v] ) {
+                children++;
+                parent[v] = node;
+                printf("DFS from %d to %d\n", node, v);
+                _DFS_to_find_articulation_point(length, graph, v, visited, disc_time, lowest_disc_time, parent, is_ap);
+                printf("Returned from DFS from %d to %d\n", node, v);
+                lowest_disc_time[node] = my_minimum_of_two_integer(lowest_disc_time[node], lowest_disc_time[v]);
+                printf("Updated lowest_disc_time[%d] = %d\n", node, lowest_disc_time[node]);
+                if( parent[node]==-1 && children>1 ) {
+                    is_ap[node] = 1;
+                    printf("Articulation point found: %d\n", node);
+                }
+                if( parent[node]!=-1 && lowest_disc_time[v]>=disc_time[node] ) {
+                    is_ap[node] = 1;
+                    printf("Articulation point found: %d\n", node);
+                }
+            }
+            else if( v!=parent[node] ) {
+                lowest_disc_time[node] = my_minimum_of_two_integer(lowest_disc_time[node], disc_time[v]);
+                printf("Back edge found between %d and %d\n", node, v);
+                printf("Updated lowest_disc_time[%d] = %d\n", node, lowest_disc_time[node]);
+            }
+        }
+    }
 }
 

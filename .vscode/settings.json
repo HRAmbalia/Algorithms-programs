@@ -3,6 +3,8 @@
         "mymath.h": "c",
         "hra.h": "c",
         "resource.h": "c",
-        "string_view": "c"
+        "string_view": "c",
+        "stdio.h": "c",
+        "cmath": "c"
     }
 }

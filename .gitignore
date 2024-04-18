@@ -17,9 +17,13 @@ Lab_04/Lab04_manual.pdf
 
 # Ignore log files
 *.log
+.gitignore
 
 # Ignore temporary directories
-temp/
 Lab_04/Practice/
 
+Project/
+
 compile.sh
+
+/todo.txt
