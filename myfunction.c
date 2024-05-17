@@ -2,6 +2,9 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdbool.h>
+#include <limits.h>
+#define INT_MAX __INT_MAX__
+
 #define INF 99999
 
 // Demo Summation function
@@ -368,7 +371,7 @@ int _temporary_partition(int arr[], int low, int high) {
 /* ------------------------------------- LAB 03 ------------------------------------- */
 
 // Lab 03 : Knapsack problem
-float my_fractional_knapsack_greedy(int length, float weight[], float profit[], float knapsack) {
+float my_fractional_knapsack_greedy(int length, float weight[], float profit[], float knapsack, float selected_weight[], float selected_profit[], float selected_fraction[]) {
     /*
         Input : 
             length: The number of items available.
@@ -386,27 +389,37 @@ float my_fractional_knapsack_greedy(int length, float weight[], float profit[], 
             1.  Function : void _sort_with_multiple_array(int length, float sort_by_this_value[], float arr1[], float arr2[], int order){...}
                 Which takes 1 integer length + 3 arrays as input, sorting is done based on the first array, Indices of array2 and array3 are shuffeled accordingly.  
     */
-
-    // Finding profit/weight ratio
     float profit_by_weight[length];
-    for ( int i=0;i<length;i++ )
+    for (int i = 0; i < length; i++)
         profit_by_weight[i] = profit[i] / weight[i];
 
-    // Sorting the array
     _sort_with_multiple_float_array(length, profit_by_weight, weight, profit, 1);
-    
-    float total = 0;
-    for ( int i=0;i<length;i++ ) {
-        if(weight[i]<=knapsack) {
-            total += profit[i];
+
+    float total_profit = 0;
+    int idx = 0;
+
+    for (int i = 0; i < length; i++) {
+        if (weight[i] <= knapsack) {
+            selected_weight[idx] = weight[i];
+            selected_profit[idx] = profit[i];
+            selected_fraction[idx] = 1.0;
+
+            total_profit += profit[i];
             knapsack -= weight[i];
-        }  
-        else {
-            total += ((knapsack/weight[i])*profit[i]);
-            knapsack -= (knapsack/weight[i]);
+        } else {
+            selected_weight[idx] = knapsack;
+            selected_profit[idx] = (knapsack / weight[i]) * profit[i];
+            selected_fraction[idx] = knapsack / weight[i];
+
+            total_profit += selected_profit[idx];
+            knapsack = 0;
         }
+        idx++;
+        if (knapsack <= 0)
+            break;
     }
-    return total;
+
+    return total_profit;
 }
 
 // Helper function for : Knapsack problem
@@ -424,93 +437,95 @@ void _sort_with_multiple_float_array(int length, float sort_by_this_value[], flo
             This function sorts the arrays arr1[] and arr2[] based on the values in sort_by_this_value[].
             It sorts the arrays in either ascending or descending order, depending on the value of the 'order' parameter.
     */
-
-    if( order!=0 && order!=1 ) {
+    if (order != 0 && order != 1) {
         printf("Error: Invalid order specified. Use 0 for ascending or 1 for descending.\n");
         return;
     }
 
-    for( int i=1;i<length;i++ ) {
+    for (int i = 1; i < length; i++) {
         float current_value = sort_by_this_value[i];
-        int current_index = arr1[i];
-        float current_third_value = arr2[i];
-        int j = i-1;
+        float current_weight = arr1[i];
+        float current_profit = arr2[i];
+        int j = i - 1;
 
-        while ( (order==0 && j>=0 && sort_by_this_value[j]>current_value) || (order==1 && j>=0 && sort_by_this_value[j]<current_value) ) {
-            sort_by_this_value[j+1] = sort_by_this_value[j];
-            arr1[j+1] = arr1[j];
-            arr2[j+1] = arr2[j];
+        while ((order == 0 && j >= 0 && sort_by_this_value[j] > current_value) || 
+               (order == 1 && j >= 0 && sort_by_this_value[j] < current_value)) {
+            sort_by_this_value[j + 1] = sort_by_this_value[j];
+            arr1[j + 1] = arr1[j];
+            arr2[j + 1] = arr2[j];
             j--;
         }
 
-        sort_by_this_value[j+1] = current_value;
-        arr1[j+1] = current_index;
-        arr2[j+1] = current_third_value;
+        sort_by_this_value[j + 1] = current_value;
+        arr1[j + 1] = current_weight;
+        arr2[j + 1] = current_profit;
     }
 }
 
 // Lab03 : Making change Greedy method
-void my_making_change_greedy(int length, int coins_array[], int capacity) {
+int my_making_change_greedy(int length, int coins_array[], int capacity, int selected_coins[], int selected_counts[]) {
     /*
-        Input : 
-            length: The number of different types of coins available.
-            coins_array[]: An array of integers representing the denominations of coins available.
-            capacity: The amount for which change needs to be made.
-        Output : 
-            None
-        Explanation : 
-            This function calculates the change for a given amount using a greedy approach.
-            It iterates through the coins_array[] from the highest denomination to the lowest,
-            and at each step, it determines the maximum number of coins of that denomination that can be used
-            without exceeding the capacity.
-            It prints the number of coins of each denomination required to make the change.
+        Input:
+            - int length: The number of different coin denominations available.
+            - int coins_array[]: An array containing the values of the coin denominations.
+            - int capacity: The total amount of money we need to make change for.
+            - int selected_coins[]: An array to store the values of the coins used to make change.
+            - int selected_counts[]: An array to store the counts of each coin used to make change.
+        
+        Output:
+            - Returns the total value of change that was successfully generated using the available coins.
+        
+        Explanation:
+            This function uses a greedy algorithm to determine the number of each type of coin needed to make change for the given capacity.
+            It sorts the coins in descending order (from highest to lowest denomination) and iteratively selects the largest denomination coin that does not exceed the remaining capacity.
+            The function updates the selected_coins and selected_counts arrays to reflect the coins used and their quantities.
+            It returns the total value of the coins used to make change. If the total value is less than the original capacity, it means that exact change could not be generated with the given coin denominations.
     */
-
-
-    // int count_of_coins = 0;
     int temp_value = 0;
-    int cost = capacity;
-    for (int i=0;i<length;i++ ) {
-        if(coins_array[i]<=capacity) {
-            int temp = capacity/coins_array[i];
-            capacity -= temp*coins_array[i];
-            printf("We need %d Coin of rupees %d = %d\n", temp, coins_array[i], (temp*coins_array[i]));
-            temp_value += (temp*coins_array[i]);
-            // count_of_coins++;
+
+    for (int i = 0; i < length; i++) {
+        if (coins_array[i] <= capacity) {
+            int temp = capacity / coins_array[i];
+            capacity -= temp * coins_array[i];
+            selected_coins[i] = coins_array[i];
+            selected_counts[i] = temp;
+            temp_value += (temp * coins_array[i]);
         }
     }
-    if(temp_value<cost) {
-        printf("Can generate change for %d only with given coin, %d is remaining.\n", temp_value, (cost-temp_value));
-    }
+
+    return temp_value;
 }
 
-// Helper function for : my_making_change_greedy
 void my_insertion_sort_for_integer_array(int arr[], int size, int order) {
     /*
-        Input: 
-            arr[]: An array of integers to be sorted.
-            size: The size of the array.
-            order: Specifies the sorting order. Use 0 for ascending or 1 for descending.
-        Output: 
-            None
-        Explanation: 
-            This function sorts the array arr[] using the insertion sort algorithm.
-            It sorts the array in either ascending or descending order, depending on the value of the 'order' parameter.
-            If 'order' is 0, the array is sorted in ascending order.
-            If 'order' is 1, the array is sorted in descending order.
+        Input:
+            - int arr[]: The array of integers to be sorted.
+            - int size: The number of elements in the array.
+            - int order: The order of sorting, where 0 represents ascending order and 1 represents descending order.
+        
+        Output:
+            - void: This function does not return a value. It sorts the input array in place.
+        
+        Explanation:
+            This function performs an insertion sort on the input array based on the specified order.
+            - If order is 0, the array is sorted in ascending order.
+            - If order is 1, the array is sorted in descending order.
+            The function first checks if the order parameter is valid. If it's not 0 or 1, an error message is printed.
+            The insertion sort algorithm works by iterating through the array and at each iteration, 
+            placing the current element in its correct position relative to the already sorted portion of the array.
+            The comparison logic within the while loop is adjusted based on the order parameter to achieve the desired sorting order.
     */
-
-    if( order!=0 && order!=1 ) {
+    if ( order!=0 && order!=1 ) {
         printf("Error: Invalid order specified. Use 0 for ascending or 1 for descending.\n");
         return;
     }
 
-    for( int i=1;i<size;i++ ) {
+    for (int i = 1; i < size; i++) {
         int current = arr[i];
         int j = i-1;
 
         // Adjust the comparison based on the order parameter
-        while( (order==0 && j>=0 && arr[j]>current) || (order==1 && j>= 0 && arr[j]<current) ) {
+        while ((order == 0 && j >= 0 && arr[j] > current) || (order == 1 && j >= 0 && arr[j] < current)) {
             arr[j+1] = arr[j];
             j--;
         }
@@ -521,7 +536,7 @@ void my_insertion_sort_for_integer_array(int arr[], int size, int order) {
 /* ------------------------------------- LAB 04 ------------------------------------- */
 
 // Lab04 : 0/1 Knapsack problem Dynamic
-int my_01_knapsack_dynamic_recursion(int length, int weight[], int value[], int capacity, int **t) {
+int my_01_knapsack_dynamic_recursion(int length, int weight[], int value[], int capacity, int **t, int *selected_items) {
     /*
         Input: 
             - length (int): The number of items available for the knapsack problem.
@@ -529,11 +544,12 @@ int my_01_knapsack_dynamic_recursion(int length, int weight[], int value[], int 
             - value (int[]): An array representing the value of each item.
             - capacity (int): The maximum capacity of the knapsack.
             - t (int**): A 2D array (matrix) for memoization of computed results.
+            - selected_items (int[]): An array to store whether an item is selected or not.
         Output: Returns the maximum value that can be obtained in the knapsack problem (int).
         Explanation: This function solves the 0/1 Knapsack problem using dynamic programming and memoization.
                       It takes the length of the items array, the weight and value arrays, the knapsack capacity,
-                      and a memoization table as inputs. The function returns the maximum value that can be obtained
-                      by selecting items to fit into the knapsack without exceeding its capacity.
+                      a memoization table, and an array to store selected items as inputs. The function returns the maximum value 
+                      that can be obtained by selecting items to fit into the knapsack without exceeding its capacity.
     */
 
     if( capacity==0 || length==0 ) {
@@ -546,20 +562,23 @@ int my_01_knapsack_dynamic_recursion(int length, int weight[], int value[], int 
     }
 
     else if( weight[length-1]<=capacity ) {
-        int temp1 = value[length-1] + my_01_knapsack_dynamic_recursion(length-1, weight, value, capacity-weight[length-1], t);
-        int temp2 = my_01_knapsack_dynamic_recursion(length-1, weight, value, capacity, t);
+        int temp1 = value[length-1] + my_01_knapsack_dynamic_recursion(length-1, weight, value, capacity-weight[length-1], t, selected_items);
+        int temp2 = my_01_knapsack_dynamic_recursion(length-1, weight, value, capacity, t, selected_items);
         if(temp1<temp2) {
             t[length][capacity] = temp2;
+            selected_items[length-1] = 0; // Item not selected
             return temp2;
         }
         else{
             t[length][capacity] = temp1;
+            selected_items[length-1] = 1; // Item selected
             return temp1;
         }
     }
     else if(weight[length-1]>capacity) {
-        int temp2 = my_01_knapsack_dynamic_recursion(length-1, weight, value, capacity, t);
+        int temp2 = my_01_knapsack_dynamic_recursion(length-1, weight, value, capacity, t, selected_items);
         t[length][capacity] = temp2;
+        selected_items[length-1] = 0; // Item not selected
         return temp2;
     }
 }
@@ -591,13 +610,13 @@ int** my_initialize_2d_dynamic_memory(int n, int m) {
 void my_prims_algorithm(int cost[], int parent[], int vertices, int graph[vertices][vertices] ) {
     /*
         Input:
-            cost[]: array to store the minimum cost to reach each vertex from the starting vertex
-            parent[]: array to store the parent of each vertex in the minimum spanning tree
-            vertices: number of vertices in the graph
-            graph[][]: adjacency matrix representing the weighted graph
+            cost[]: (Integer array) to store the minimum cost to reach each vertex from the starting vertex
+            parent[]: (Integer array) to store the parent of each vertex in the minimum spanning tree
+            vertices: (Integer) number of vertices in the graph
+            graph[][]: (2D Integer array)adjacency matrix representing the weighted graph
         
         Output:
-            Prints the minimum spanning tree in the format of edges and their corresponding weights
+            None - Updates graph[][] and parent[] passed as argument by the user.
         
         Explanation:
             For start node = 0
@@ -605,7 +624,6 @@ void my_prims_algorithm(int cost[], int parent[], int vertices, int graph[vertic
             Prim's algorithm grows a single tree (or forest) by adding vertices to the minimum spanning tree one at a time, starting from an arbitrary vertex.
             At each step, it selects the edge with the minimum weight that connects a vertex in the minimum spanning tree to a vertex outside of it.
             The function updates the cost array with the minimum cost to reach each vertex and the parent array with the parent of each vertex in the minimum spanning tree.
-            Finally, it prints the edges and their corresponding weights to represent the minimum spanning tree.
     */
     int start = 0;
     cost[start] = 0;
@@ -632,11 +650,6 @@ void my_prims_algorithm(int cost[], int parent[], int vertices, int graph[vertic
                 cost[i] = graph[minIndex][i];
             }
         }
-    }
-
-    printf("Edge\tWeight\n");
-    for( int i=1;i<vertices;i++ ) {
-        printf("%d - %d \t%d \n", parent[i], i, graph[i][parent[i]]);
     }
 }
 
@@ -695,13 +708,14 @@ int my_minimum_of_three_integer(int x, int y, int z) {
 /* ------------------------------------- LAB 06 ------------------------------------- */
 
 // Lab06 : BFS traversal
-void my_bfs_traversal(int start, int length, int graph[length][length], int parent[length]) {
+void my_bfs_traversal(int start, int length, int graph[length][length], int *parent, int traversal_order[length]) {
     /*
         Input:
             - start: The starting node for the BFS traversal (integer).
             - length: The number of vertices in the graph (integer).
             - graph: A 2D integer array representing the adjacency matrix of the graph. `graph[i][j]` indicates an edge between node `i` and node `j` (1 or 0).
             - parent: A 1D integer array to store the parent node for each visited node during the BFS traversal (used for path reconstruction if needed).
+            - traversal_order : A 1D integer array which stores traversal order.
 
         Output:
             - The function performs a Breadth-First Search (BFS) traversal on the provided graph starting from the `start` node.
@@ -709,31 +723,6 @@ void my_bfs_traversal(int start, int length, int graph[length][length], int pare
 
         Explanation:
             This function implements a Breadth-First Search (BFS) algorithm to explore a connected graph. It uses a queue to maintain the order of node exploration.
-
-            1. Initialization:
-                - A queue is declared with a size sufficient to hold all possible edges (length * (length - 1)) / 2 (assuming an undirected graph).
-                - `front` and `rear` pointers are used to manage the queue (initially `front = 0` and `rear = -1`).
-                - A visited array (`visited`) is initialized to `0` for all nodes, indicating they haven't been visited yet.
-
-            2. Start Node Enqueueing:
-                - `rear` is incremented and the starting node (`start`) is added to the queue.
-                - The starting node is marked as visited in the `visited` array.
-
-            3. BFS Traversal:
-                - A loop continues as long as there are elements in the queue (`front <= rear`).
-                    - The current node being processed is retrieved from the front of the queue (`queue[front]`), incremented by 1 for user-friendly output (starting from 1), and printed.
-                    - The visited nodes and queue contents are printed for visualization (can be replaced with your desired output).
-                    - `front` is incremented to remove the processed node from the queue.
-
-                4. Explore Adjacent Nodes:
-                    - For each neighbor (`i`) of the current node:
-                        - If there's an edge (`graph[current][i] == 1`) and the neighbor hasn't been visited (`!visited[i]`), perform the following:
-                            - Add the neighbor (`i`) to the queue (`rear` is incremented and the neighbor is added).
-                            - Mark the neighbor as visited (`visited[i] = 1`).
-                            - Set the parent of the neighbor (`parent[i]`) to the current node (`current`), indicating the exploration path.
-                            - Print a message indicating the newly discovered edge.
-
-    This function provides a step-by-step BFS traversal of the graph, allowing you to visualize the exploration process. The `parent` array can be used to reconstruct the path from the starting node to any reached node if needed. 
     */
 
     int queue[(length*(length-1))/2];
@@ -746,20 +735,22 @@ void my_bfs_traversal(int start, int length, int graph[length][length], int pare
     rear++;
     queue[rear] = start;
     visited[start] = 1;
+    int orderIndex = 0;
 
     while( front<=rear ) {
 
-        printf("\nVisited array: ");
-        my_print_1d_integer_array(visited, length);
+        // printf("\nVisited array: ");
+        // print_1d_integer_array(visited, length);
 
-        printf("Queue : ");
-        for( int i=front;i<=rear;i++ ) {
-            printf("%d ", queue[i]+1);
-        }
-        printf("\n");
+        // printf("Queue : ");
+        // for( int i=front;i<=rear;i++ ) {
+        //     printf("%d ", queue[i]+1);
+        // }
+        // printf("\n");
 
         int current = queue[front++];
-        printf("Visiting node(front of the queue) : %d\n", current+1);
+        traversal_order[orderIndex++] = current+1;
+        // printf("Visiting node(front of the queue) : %d\n", current+1);
 
         // Explore adjacent nodes of current
         for( int i=0;i<length;i++ ) {
@@ -768,83 +759,98 @@ void my_bfs_traversal(int start, int length, int graph[length][length], int pare
                 queue[rear] = i; // Add adjacent nodes to the queue
                 visited[i] = 1; // Node is now visited
                 parent[i] = current;// As we reached from curent to this node
-                printf("Adding edge: (%d, %d)\n", current+1, i+1);
+                // printf("Adding edge: (%d, %d)\n", current+1, i+1);
             }
         }
     }
 }
 
 // Lab06 : DFS traversal
-void my_dfs_traversal(int start, int length, int **graph, int *parent) {
+void my_dfs_traversal(int start, int length, int **graph, int *parent, int *traversal_order) {
+    /*
+        Input:
+            - start: The starting node for the DFS traversal (integer).
+            - length: The number of vertices in the graph (integer).
+            - graph: A 2D integer array representing the adjacency matrix of the graph. `graph[i][j]` indicates an edge between node `i` and node `j` (1 or 0).
+            - parent: A 1D integer array to store the parent node for each visited node during the DFS traversal (used to generate DFS spanning tree).
+            - traversal_order : A 1D integer array which stores traversal order.
+
+        Output:
+            - None - The function updates the traversal_order[] array and parent[] array which is passed as argument, stores traversal order and parent for each node in DFS tree.
+
+        Explanation:
+            This function implements a Depth-First Search (DFS) algorithm to explore a connected graph. It uses a stack to maintain the order of node exploration.
+    */
+    int stack[length*2];
+    int top = -1;
+    int visited[length];
+
+    for (int i = 0; i < length; i++) {
+        visited[i] = 0;
+    }
+
+    stack[++top] = start;
+    visited[start] = 1; 
+    while (top != -1) {
+        int current = stack[top--];
+        *traversal_order++ = current;
+
+        for (int i = length - 1; i >= 0; i--) {
+            if (graph[current][i] && !visited[i]) {
+                stack[++top] = i;
+                visited[i] = 1; // Mark adjacent node as visited
+                parent[i] = current; // Update parent
+            }
+        }
+    }
+}
+
+/* ------------------------------------- LAB 07 ------------------------------------- */
+
+// Helper function for : my_topological_sort_using_dfs
+void _dfs_for_topological_sort(int start, int length, int graph[length][length], int *global_visited, int topological_sort[length]) {
     /*
         Input: 
             - start: The starting node for DFS traversal.
             - length: The number of nodes in the graph.
             - graph: A 2D array representing the graph's adjacency matrix.
-            - parent: An array to store the parent node for each node visited during traversal.
+            - global_visited: An array indicating nodes visited across different invocations.
+            - topological_sort: An array to store the topological ordering.
         Output: None (Output is printed directly)
         Explanation: Performs Depth-First Search (DFS) traversal on a graph represented by an adjacency matrix.
+        Requirement : This function is required for another function, `my_topological_sort_using_dfs`,
+            which depends on this function being defined.
     */
-
-    int stack[(length * (length - 1)) / 2];
+    int visited[length];
+    for( int i=0;i<length;i++ ) {
+        visited[i] = global_visited[i];
+    }
+    int stack[(length*(length-1))/2];
     int top = -1;
-    int visited[9];
-    for (int i = 0; i < length; i++)
-        visited[i] = 0;
-
     top++;
     stack[top] = start;
     visited[start] = 1;
-
-    printf("DFS Traversal order :\n");
-
-    while (top >= 0) {
-
-        printf("\nVisited array: ");
-        my_print_1d_integer_array(visited, length);
-
-        printf("Stack : ");
-        for (int i = 0; i <= top; i++)
-        {
-            printf("%d ", stack[i] + 1);
-        }
-        printf("\n");
-
-        int found = 0;
-        // Visiting each node : O(n)
+    while( top!=-1 ) {
         int current = stack[top];
-        printf("Visiting node(top of the stack) : %d\n", current + 1);
-        top--; // This is not correct, we shouldn't have to pop at this point
-
-        // Exploring adjacent nodes of current
-        for (int i = 0; i < length; i++)
-        {
-            // Visiting adjucent nodes for each vertices : O()
-            if (graph[current][i] && !visited[i])
-            {
+        // printf("Visiting node : %d\n", current+1);
+        top--;
+        for( int i=0;i<length;i++ ) {
+            if (graph[current][i] && !visited[i]) {
                 top++;
-                stack[top] = i;      // Add adjecent nodes to stack
-                visited[i] = 1;      // Node is now visited
-                parent[i] = current; // As we reached from curent to this node
-                found = 1;
-                printf("Adding edge: (%d, %d)\n", current + 1, i + 1);
-                break;
+                stack[top] = i; // Add adjecent nodes to stack
+                visited[i] = 1; // Node is now visited
+                // printf("Adding node %d to stack\n", i+1);
             }
         }
-        if (!found)
-            top--;
+        topological_sort[current] = current + 1; // Add current node to topological sort array
     }
-
-    printf("\nDFS Spanning Tree :\n");
-    for (int i = 0; i < length; i++)
-        if (parent[i] != -1)
-            printf("(%d, %d)\n", parent[i] + 1, i + 1);
+    for( int i=0;i<length;i++ ) {
+        global_visited[i] = visited[i];
+    }
 }
 
-/* ------------------------------------- LAB 07 ------------------------------------- */
-
-// Lab07 : Topological Sort using DFS
-void my_topological_sort_using_dfs(int length, int graph[length][length]) {
+// Lab 07 : 
+void my_topological_sort_using_dfs(int length, int graph[length][length], int topological_sort[length]) {
     /*
         Input: 
             - length: the number of nodes in the graph
@@ -863,92 +869,13 @@ void my_topological_sort_using_dfs(int length, int graph[length][length]) {
         global_visited[i] = 0;
     for( int i=0;i<length;i++ ) {
         if( global_visited[i]==0 ) {
-            printf("\nStarting DFS from node %d\n", i+1);
-            _dfs_for_topological_sort(i, length, graph, global_visited);
+            // printf("\nStarting DFS from node %d\n", i+1);
+            _dfs_for_topological_sort(i, length, graph, global_visited, topological_sort);
         }
     }
 }
 
-// Helper function for : my_topological_sort_using_dfs
-void _dfs_for_topological_sort(int start, int length, int graph[length][length], int *global_visited) {
-    /*
-        Input: 
-            - start: The starting node for DFS traversal.
-            - length: The number of nodes in the graph.
-            - graph: A 2D array representing the graph's adjacency matrix.
-            - global_visited: An array indicating nodes visited across different invocations.
-        Output: None (Output is printed directly)
-        Explanation: Performs Depth-First Search (DFS) traversal on a graph represented by an adjacency matrix.
-        Requirement : This function is required for another function, `my_topological_sort_using_dfs`,
-            which depends on this function being defined.
-    */
-    int visited[length];
-    for( int i=0;i<length;i++ ) {
-        visited[i] = global_visited[i];
-    }
-    int stack[(length*(length-1))/2];
-    int top = -1;
-    top++;
-    stack[top] = start;
-    visited[start] = 1;
-    while( top!=-1 ) {
-        int current = stack[top];
-        printf("Visiting node : %d\n", current+1);
-        top--;
-        for( int i=0;i<length;i++ ) {
-            if (graph[current][i] && !visited[i]) {
-                top++;
-                stack[top] = i; // Add adjecent nodes to stack
-                visited[i] = 1; // Node is now visited
-                printf("Adding node %d to stack\n", i+1);
-            }
-        }
-    }
-    for( int i=0;i<length;i++ ) {
-        global_visited[i] = visited[i];
-    }
-}
-
-// Lab07 : Topological sort using source removal
-void my_topological_sort_using_source_removal(int length, int *indegree, int graph[length][length]) {
-    /*
-        Input : 
-            - length: the number of nodes in the graph
-            - indegree: an array representing the indegree of each node in the graph
-            - graph: a 2D array representing the adjacency matrix of the graph
-                     where graph[i][j] = 1 if there is an edge from node i to node j, 0 otherwise
-        Output : 
-        Explanation : 
-            - This function performs a topological sort on a directed acyclic graph (DAG) using the source removal algorithm.
-            - It deletes nodes with indegree 0 iteratively until all nodes are visited.
-        Requirement : 
-            - _deleted_node(int length, int node, int *indegree, int graph[length][length]) must be defined which will modify the indegree array and update the graph by removing edges.
-            - void _find_indegree(int length, int graph[length][length], int *indegree) must be defined which will calculate the indegree of each node in the graph.
-    */
-
-    int visited[length];
-    for( int i=0;i<length;i++ ) {
-        visited[i] = 0;
-    }
-
-    while(1) {
-        int temp = 0;
-        for( int i=0;i<length;i++ ) {
-            if(indegree[i]==0 && visited[i]==0){
-                printf("deleting node : %d\n", i+1);
-                _deleted_node(length, i, indegree, graph);
-                visited[i] = 1;
-                temp = 1;
-            }
-        }
-        if(temp==0) {
-            break;
-        }
-    }
-}
-
-// Helper function for : my_topological_sort_using_source_removal
-void _find_indegree(int length, int graph[length][length], int *indegree) {
+void my_find_indegree(int length, int graph[length][length], int *indegree) {
     /*
         Input : 
             - length: the number of nodes in the graph
@@ -969,7 +896,6 @@ void _find_indegree(int length, int graph[length][length], int *indegree) {
     }
 }
 
-// Helper function for : my_topological_sort_using_source_removal
 void _deleted_node(int length, int node, int *indegree, int graph[length][length]) {
     /*
         Input : 
@@ -991,13 +917,52 @@ void _deleted_node(int length, int node, int *indegree, int graph[length][length
     }
 }
 
-// Lab07 : 
-void my_articulation_point(int length, int **graph, int V, int is_ap[]) {
+void my_topological_sort_using_source_removal(int length, int *indegree, int graph[length][length], int topological_sort[length]) {
+    /*
+        Input : 
+            - length: the number of nodes in the graph
+            - indegree: an array representing the indegree of each node in the graph
+            - graph: a 2D array representing the adjacency matrix of the graph
+                     where graph[i][j] = 1 if there is an edge from node i to node j, 0 otherwise
+            - topological_sort: An array to store the topological ordering.
+        Output : 
+        Explanation : 
+            - This function performs a topological sort on a directed acyclic graph (DAG) using the source removal algorithm.
+            - It deletes nodes with indegree 0 iteratively until all nodes are visited.
+        Requirement : 
+            - _deleted_node(int length, int node, int *indegree, int graph[length][length]) must be defined which will modify the indegree array and update the graph by removing edges.
+            - void my_find_indegree(int length, int graph[length][length], int *indegree) must be defined which will calculate the indegree of each node in the graph.
+    */
+
+    int visited[length];
+    for( int i=0;i<length;i++ ) {
+        visited[i] = 0;
+    }
+    int index = 0;
+
+    while(1) {
+        int temp = 0;
+        for( int i=0;i<length;i++ ) {
+            if(indegree[i]==0 && visited[i]==0){
+                // printf("deleting node : %d\n", i+1);
+                _deleted_node(length, i, indegree, graph);
+                visited[i] = 1;
+                topological_sort[index++] = i + 1; // Add current node to topological sort array
+                temp = 1;
+            }
+        }
+        if(temp==0) {
+            break;
+        }
+    }
+}
+
+// Lab07 : Find Articulation Point
+void my_articulation_point(int length, int **graph, int is_ap[]) {
     /*
         Input :
-            - length: The number of nodes in the graph.
+            - length: The number of verices in the graph.
             - graph: An adjacency matrix representing the graph.
-            - V: The number of vertices in the graph.
             - is_ap[]: An array to mark nodes as articulation points.
         Output :
             No explicit output. The function updates the is_ap[] array to mark articulation points.
@@ -1014,23 +979,23 @@ void my_articulation_point(int length, int **graph, int V, int is_ap[]) {
     int lowest_disc_time[length];
     int parent[length];
     
-    for( int i=0;i<V;i++ ) {
+    for( int i=0;i<length;i++ ) {
         parent[i] = -1;
         visited[i] = false;
         is_ap[i] = false;
     }
     
-    for( int i=0;i<V;i++ )
+    for( int i=0;i<length;i++ )
         if (!visited[i])
             _DFS_to_find_articulation_point(length, graph, i, visited, disc_time, lowest_disc_time, parent, is_ap);
 }
 
-// 
+// Helper function for : my_articulation_point
 int my_minimum_of_two_integer(int a, int b) {
     return (a<b) ? a:b;
 }
 
-// 
+// Helper function for : my_articulation_point
 void _DFS_to_find_articulation_point(int length, int **graph, int node, int visited[], int disc_time[], int lowest_disc_time[], int parent[], int is_ap[]) {
     /*
         Input:
@@ -1064,35 +1029,109 @@ void _DFS_to_find_articulation_point(int length, int **graph, int node, int visi
     visited[node] = 1;
     disc_time[node] = lowest_disc_time[node] = ++time;
     
-    printf("\nVisiting node %d\n", node);
-    printf("Updated disc_time[%d] = %d\n", node, disc_time[node]);
-    printf("Updated lowest_disc_time[%d] = %d\n", node, lowest_disc_time[node]);
+    // printf("\nVisiting node %d\n", node);
+    // printf("Updated disc_time[%d] = %d\n", node, disc_time[node]);
+    // printf("Updated lowest_disc_time[%d] = %d\n", node, lowest_disc_time[node]);
 
     for( int v=0;v<length;v++ ) {
         if( graph[node][v] ) {
             if ( !visited[v] ) {
                 children++;
                 parent[v] = node;
-                printf("DFS from %d to %d\n", node, v);
+                // printf("DFS from %d to %d\n", node, v);
                 _DFS_to_find_articulation_point(length, graph, v, visited, disc_time, lowest_disc_time, parent, is_ap);
-                printf("Returned from DFS from %d to %d\n", node, v);
+                // printf("Returned from DFS from %d to %d\n", node, v);
                 lowest_disc_time[node] = my_minimum_of_two_integer(lowest_disc_time[node], lowest_disc_time[v]);
-                printf("Updated lowest_disc_time[%d] = %d\n", node, lowest_disc_time[node]);
+                // printf("Updated lowest_disc_time[%d] = %d\n", node, lowest_disc_time[node]);
                 if( parent[node]==-1 && children>1 ) {
                     is_ap[node] = 1;
-                    printf("Articulation point found: %d\n", node);
+                    // printf("Articulation point found: %d\n", node);
                 }
                 if( parent[node]!=-1 && lowest_disc_time[v]>=disc_time[node] ) {
                     is_ap[node] = 1;
-                    printf("Articulation point found: %d\n", node);
+                    // printf("Articulation point found: %d\n", node);
                 }
             }
             else if( v!=parent[node] ) {
                 lowest_disc_time[node] = my_minimum_of_two_integer(lowest_disc_time[node], disc_time[v]);
-                printf("Back edge found between %d and %d\n", node, v);
-                printf("Updated lowest_disc_time[%d] = %d\n", node, lowest_disc_time[node]);
+                // printf("Back edge found between %d and %d\n", node, v);
+                // printf("Updated lowest_disc_time[%d] = %d\n", node, lowest_disc_time[node]);
             }
         }
     }
 }
 
+/* ------------------------------------- LAB 08 ------------------------------------- */
+
+// Helper Function for : my_dijkstra
+int _mindist ( int dist[], bool check[], int V ) {
+    /*
+        Input : 
+            - dist[]: An array storing the shortest distance of vertices from the source vertex.
+            - check[]: An array representing whether a vertex is included in the shortest path tree or not.
+            - V: Number of vertices in the graph.
+        Output : 
+            - Returns the index of the vertex with the minimum distance value, which is not yet included in the shortest path tree.
+        Explanation : 
+            This function iterates through all the vertices not yet included in the shortest path tree and returns the index of the vertex with the minimum distance value. 
+    */
+
+    int min = INT_MAX, minindex;
+    for ( int i=0;i<V;i++ )
+        if ( check[i]==false && dist[i]<=min ) {
+            min = dist[i]; // update when min is greater than dist recorded
+            minindex = i;
+        }
+    return minindex;
+}
+
+// Lab 08 : Dijkstra's algorithm to fincd shortest path
+void my_dijkstra(int V, int arr[V][V], int src, int dist[V]) {
+    /*
+        Input : 
+            - V: Number of vertices in the graph.
+            - arr[][]: Adjacency matrix representing the graph.
+            - src: Source vertex.
+            - dist[]: An array to store the shortest distance from the source vertex to every other vertex.
+        Output : None, output will be copied to array passed by user as last argument. 
+        Explanation : 
+            This function implements Dijkstra's algorithm to find the shortest path from a given source vertex to all other vertices in the graph.
+        Requirement : 
+            Function : int _mindist ( int dist[], bool check[], int V ) -> Which returns the index of the minimum valued node 
+    */
+
+    bool check[V]; // check[i] will true if vertex i is included in shortest path
+    for ( int i=0;i<V;i++ ) {
+        check[i] = false;
+    }
+    dist[src] = 0; // cause starting node
+    for ( int i=0;i<V-1;i++ ) {
+        int min = _mindist(dist, check, V); // pick the minimum distance vertex.
+        check[min] = true; // mark the picked vertex as processed
+        for ( int j=0;j<V;j++ )
+            if ( !check[j] && arr[min][j] && dist[min]!=INT_MAX && dist[min]+arr[min][j]<dist[j] )
+                dist[j] = dist[min]+arr[min][j]; // update dist[v] by shortest distance
+    }
+}
+
+// Lab 08 : Floyd Warshell algorithm
+void my_floydWarshall_algo(int n, int graph[n][n]) {
+    /*
+        Input :
+            - n: Number of vertices in the graph.
+            - graph[][]: Adjacency matrix representing the graph.
+        Output : None, Output will be updated in passed 2D array itself.
+        Explanation : 
+            This function implements the Floyd Warshall algorithm to find the shortest distances between every pair of vertices in a weighted graph.
+    */
+
+    for ( int k=0;k<n;k++ ) {
+        for ( int i=0;i<n;i++ ) {
+            for ( int j=0;j<n;j++ ) {
+                if (graph[i][j] > graph[i][k]+graph[k][j] ) {
+                    graph[i][j] = graph[i][k]+graph[k][j];
+                }
+            }
+        }
+    }
+}

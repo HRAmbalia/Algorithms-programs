@@ -4,79 +4,47 @@
 #include <stdlib.h>
 #include "/home/hr/Documents/Semester_10/Lab_DAA/HRA.h"
 
-// void print_1d_integer_array(int *integer_array, int n) {
-//     for (int i = 0; i < n; i++)
-//         printf("%d ", integer_array[i]);
-//     printf("\n");
-// }
-
-// void my_dfs_traversal(int start, int length, int **graph, int *parent) {
+// void my_dfs_traversal(int start, int length, int **graph, int *parent, int *traversal_order) {
 //     /*
-//         Input: 
-//             - start: The starting node for DFS traversal.
-//             - length: The number of nodes in the graph.
-//             - graph: A 2D array representing the graph's adjacency matrix.
-//             - parent: An array to store the parent node for each node visited during traversal.
-//         Output: None (Output is printed directly)
-//         Explanation: Performs Depth-First Search (DFS) traversal on a graph represented by an adjacency matrix.
+//         Input:
+//             - start: The starting node for the BFS traversal (integer).
+//             - length: The number of vertices in the graph (integer).
+//             - graph: A 2D integer array representing the adjacency matrix of the graph. `graph[i][j]` indicates an edge between node `i` and node `j` (1 or 0).
+//             - parent: A 1D integer array to store the parent node for each visited node during the BFS traversal (used for path reconstruction if needed).
+//             - traversal_order : A 1D integer array which stores traversal order.
+
+//         Output:
+//             - The function performs a Breadth-First Search (BFS) traversal on the provided graph starting from the `start` node.
+//             - It prints the visited nodes and the queue contents at each step for visualization (can be removed for a cleaner output).
+
+//         Explanation:
+//             This function implements a Breadth-First Search (BFS) algorithm to explore a connected graph. It uses a queue to maintain the order of node exploration.
 //     */
-//     int stack[(length * (length - 1)) / 2];
+//     int stack[length*2];
 //     int top = -1;
-//     int visited[9];
-//     for (int i = 0; i < length; i++)
+//     int visited[length];
+
+//     for (int i = 0; i < length; i++) {
 //         visited[i] = 0;
-
-//     top++;
-//     stack[top] = start;
-//     visited[start] = 1;
-
-//     printf("DFS Traversal order :\n");
-
-//     while (top >= 0) {
-
-//         printf("\nVisited array: ");
-//         print_1d_integer_array(visited, length);
-
-//         printf("Stack : ");
-//         for (int i = 0; i <= top; i++)
-//         {
-//             printf("%d ", stack[i] + 1);
-//         }
-//         printf("\n");
-
-//         int found = 0;
-//         // Visiting each node : O(n)
-//         int current = stack[top];
-//         printf("Visiting node(top of the stack) : %d\n", current + 1);
-//         top--; // This is not correct, we shouldn't have to pop at this point
-
-//         // Exploring adjacent nodes of current
-//         for (int i = 0; i < length; i++)
-//         {
-//             // Visiting adjucent nodes for each vertices : O()
-//             if (graph[current][i] && !visited[i])
-//             {
-//                 top++;
-//                 stack[top] = i;      // Add adjecent nodes to stack
-//                 visited[i] = 1;      // Node is now visited
-//                 parent[i] = current; // As we reached from curent to this node
-//                 found = 1;
-//                 printf("Adding edge: (%d, %d)\n", current + 1, i + 1);
-//                 break;
-//             }
-//         }
-//         if (!found)
-//             top--;
 //     }
 
-//     printf("\nDFS Spanning Tree :\n");
-//     for (int i = 0; i < length; i++)
-//         if (parent[i] != -1)
-//             printf("(%d, %d)\n", parent[i] + 1, i + 1);
+//     stack[++top] = start;
+//     visited[start] = 1; 
+//     while (top != -1) {
+//         int current = stack[top--];
+//         *traversal_order++ = current;
+
+//         for (int i = length - 1; i >= 0; i--) {
+//             if (graph[current][i] && !visited[i]) {
+//                 stack[++top] = i;
+//                 visited[i] = 1; // Mark adjacent node as visited
+//                 parent[i] = current; // Update parent
+//             }
+//         }
+//     }
 // }
 
-int main()
-{
+int main() {
     int n = 9;
     int **graph = (int **)malloc(n * sizeof(int *));
     for (int i = 0; i < n; i++)
@@ -100,14 +68,21 @@ int main()
 
     int parent[9] = {-1};
     int start = 0;
+    int traversal_order[9] = {0};
 
-    my_dfs_traversal(start, n, graph, parent);
+    my_dfs_traversal(start, n, graph, parent, traversal_order);
+
+    printf("\nDFS Traversal Order :\n");
+    for (int i = 0; i < n; i++) {
+        printf("%d ", traversal_order[i] + 1);
+    }
+
+    printf("\n\nDFS Spanning Tree :\n");
+    for (int i = 0; i < n; i++) {
+        if (parent[i] != -1) {
+            printf("(%d, %d)\n", parent[i] + 1, i + 1);
+        }
+    }
 
     return 0;
 }
-
-/*
-    Time complexity :
-    Visiting n vertex once : O(n)
-    For each vertex, exploring its m adjacent nodes(edges) : O(n+m)
-*/

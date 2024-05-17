@@ -40,44 +40,43 @@
 //     visited[node] = 1;
 //     disc_time[node] = lowest_disc_time[node] = ++time;
     
-//     printf("\nVisiting node %d\n", node);
-//     printf("Updated disc_time[%d] = %d\n", node, disc_time[node]);
-//     printf("Updated lowest_disc_time[%d] = %d\n", node, lowest_disc_time[node]);
+//     // printf("\nVisiting node %d\n", node);
+//     // printf("Updated disc_time[%d] = %d\n", node, disc_time[node]);
+//     // printf("Updated lowest_disc_time[%d] = %d\n", node, lowest_disc_time[node]);
 
 //     for( int v=0;v<length;v++ ) {
 //         if( graph[node][v] ) {
 //             if ( !visited[v] ) {
 //                 children++;
 //                 parent[v] = node;
-//                 printf("DFS from %d to %d\n", node, v);
+//                 // printf("DFS from %d to %d\n", node, v);
 //                 _DFS_to_find_articulation_point(length, graph, v, visited, disc_time, lowest_disc_time, parent, is_ap);
-//                 printf("Returned from DFS from %d to %d\n", node, v);
-//                 lowest_disc_time[node] = min(lowest_disc_time[node], lowest_disc_time[v]);
-//                 printf("Updated lowest_disc_time[%d] = %d\n", node, lowest_disc_time[node]);
+//                 // printf("Returned from DFS from %d to %d\n", node, v);
+//                 lowest_disc_time[node] = my_minimum_of_two_integer(lowest_disc_time[node], lowest_disc_time[v]);
+//                 // printf("Updated lowest_disc_time[%d] = %d\n", node, lowest_disc_time[node]);
 //                 if( parent[node]==-1 && children>1 ) {
 //                     is_ap[node] = 1;
-//                     printf("Articulation point found: %d\n", node);
+//                     // printf("Articulation point found: %d\n", node);
 //                 }
 //                 if( parent[node]!=-1 && lowest_disc_time[v]>=disc_time[node] ) {
 //                     is_ap[node] = 1;
-//                     printf("Articulation point found: %d\n", node);
+//                     // printf("Articulation point found: %d\n", node);
 //                 }
 //             }
 //             else if( v!=parent[node] ) {
 //                 lowest_disc_time[node] = my_minimum_of_two_integer(lowest_disc_time[node], disc_time[v]);
-//                 printf("Back edge found between %d and %d\n", node, v);
-//                 printf("Updated lowest_disc_time[%d] = %d\n", node, lowest_disc_time[node]);
+//                 // printf("Back edge found between %d and %d\n", node, v);
+//                 // printf("Updated lowest_disc_time[%d] = %d\n", node, lowest_disc_time[node]);
 //             }
 //         }
 //     }
 // }
 
-// void my_articulation_point(int length, int **graph, int V, int is_ap[]) {
+// void my_articulation_point(int length, int **graph, int is_ap[]) {
 //     /*
 //         Input :
 //             - length: The number of nodes in the graph.
 //             - graph: An adjacency matrix representing the graph.
-//             - V: The number of vertices in the graph.
 //             - is_ap[]: An array to mark nodes as articulation points.
 //         Output :
 //             No explicit output. The function updates the is_ap[] array to mark articulation points.
@@ -94,13 +93,13 @@
 //     int lowest_disc_time[length];
 //     int parent[length];
     
-//     for( int i=0;i<V;i++ ) {
+//     for( int i=0;i<length;i++ ) {
 //         parent[i] = -1;
 //         visited[i] = false;
 //         is_ap[i] = false;
 //     }
     
-//     for( int i=0;i<V;i++ )
+//     for( int i=0;i<length;i++ )
 //         if (!visited[i])
 //             _DFS_to_find_articulation_point(length, graph, i, visited, disc_time, lowest_disc_time, parent, is_ap);
 // }
@@ -131,12 +130,12 @@ int main() {
 
     int is_ap[V];
 
-    my_articulation_point(V, graph, V, is_ap);
+    my_articulation_point(V, graph, is_ap);
 
     printf("Articulation Points: ");
     for( int i=0;i<V;i++ )
         if( is_ap[i] )
-            printf("%d ", i + 1);
+            printf("%d - ", i+1);
     printf("\n");
     
     return 0;

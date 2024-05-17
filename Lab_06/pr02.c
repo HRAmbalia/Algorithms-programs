@@ -10,7 +10,7 @@
 //     printf("\n");
 // }
 
-// void my_bfs_traversal(int start, int length, int graph[length][length], int *parent) {
+// void my_bfs_traversal(int start, int length, int graph[length][length], int *parent, int traversal_order[length]) {
 //     /*
 //         Input:
 //             - start: The starting node for the BFS traversal (integer).
@@ -25,29 +25,6 @@
 //         Explanation:
 //             This function implements a Breadth-First Search (BFS) algorithm to explore a connected graph. It uses a queue to maintain the order of node exploration.
 
-//             1. Initialization:
-//                 - A queue is declared with a size sufficient to hold all possible edges (length * (length - 1)) / 2 (assuming an undirected graph).
-//                 - `front` and `rear` pointers are used to manage the queue (initially `front = 0` and `rear = -1`).
-//                 - A visited array (`visited`) is initialized to `0` for all nodes, indicating they haven't been visited yet.
-
-//             2. Start Node Enqueueing:
-//                 - `rear` is incremented and the starting node (`start`) is added to the queue.
-//                 - The starting node is marked as visited in the `visited` array.
-
-//             3. BFS Traversal:
-//                 - A loop continues as long as there are elements in the queue (`front <= rear`).
-//                     - The current node being processed is retrieved from the front of the queue (`queue[front]`), incremented by 1 for user-friendly output (starting from 1), and printed.
-//                     - The visited nodes and queue contents are printed for visualization (can be replaced with your desired output).
-//                     - `front` is incremented to remove the processed node from the queue.
-
-//                 4. Explore Adjacent Nodes:
-//                     - For each neighbor (`i`) of the current node:
-//                         - If there's an edge (`graph[current][i] == 1`) and the neighbor hasn't been visited (`!visited[i]`), perform the following:
-//                             - Add the neighbor (`i`) to the queue (`rear` is incremented and the neighbor is added).
-//                             - Mark the neighbor as visited (`visited[i] = 1`).
-//                             - Set the parent of the neighbor (`parent[i]`) to the current node (`current`), indicating the exploration path.
-//                             - Print a message indicating the newly discovered edge.
-
 //     This function provides a step-by-step BFS traversal of the graph, allowing you to visualize the exploration process. The `parent` array can be used to reconstruct the path from the starting node to any reached node if needed. 
 //     */
 
@@ -61,20 +38,22 @@
 //     rear++;
 //     queue[rear] = start;
 //     visited[start] = 1;
+//     int orderIndex = 0;
 
 //     while( front<=rear ) {
 
-//         printf("\nVisited array: ");
-//         print_1d_integer_array(visited, length);
+//         // printf("\nVisited array: ");
+//         // print_1d_integer_array(visited, length);
 
-//         printf("Queue : ");
-//         for( int i=front;i<=rear;i++ ) {
-//             printf("%d ", queue[i]+1);
-//         }
-//         printf("\n");
+//         // printf("Queue : ");
+//         // for( int i=front;i<=rear;i++ ) {
+//         //     printf("%d ", queue[i]+1);
+//         // }
+//         // printf("\n");
 
 //         int current = queue[front++];
-//         printf("Visiting node(front of the queue) : %d\n", current+1);
+//         traversal_order[orderIndex++] = current+1;
+//         // printf("Visiting node(front of the queue) : %d\n", current+1);
 
 //         // Explore adjacent nodes of current
 //         for( int i=0;i<length;i++ ) {
@@ -83,7 +62,7 @@
 //                 queue[rear] = i; // Add adjacent nodes to the queue
 //                 visited[i] = 1; // Node is now visited
 //                 parent[i] = current;// As we reached from curent to this node
-//                 printf("Adding edge: (%d, %d)\n", current+1, i+1);
+//                 // printf("Adding edge: (%d, %d)\n", current+1, i+1);
 //             }
 //         }
 //     }
@@ -105,9 +84,14 @@ int main() {
     };
     int parent[9] = {-1};
     int start = 0;
+    int traversal_order[9] = {0};
 
-    printf("BFS Spanning Tree Edges:\n");
-    my_bfs_traversal(start, n, graph, parent);
+    my_bfs_traversal(start, n, graph, parent, traversal_order);
+
+    printf("BFS Traversal Order : ");
+    for( int i=0;i<n;i++ ) {
+        printf("%d ", traversal_order[i]);
+    }
 
     printf("\nBFS Spanning Tree :\n");
     for( int i=0;i<n;i++ ) {
@@ -115,6 +99,8 @@ int main() {
             printf("(%d, %d)\n", parent[i]+1, i+1);
         }
     }
+    
+    
 
     return 0;
 }

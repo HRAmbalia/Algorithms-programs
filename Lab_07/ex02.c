@@ -1,9 +1,9 @@
 // Topological sort using source removal
 
-#include "/home/hr/Documents/Semester_10/Lab_DAA/HRA.h"
 #include <stdio.h>
+#include "/home/hr/Documents/Semester_10/Lab_DAA/HRA.h"
 
-// void _find_indegree(int length, int graph[length][length], int *indegree) {
+// void my_find_indegree(int length, int graph[length][length], int *indegree) {
 //     /*
 //         Input : 
 //             - length: the number of nodes in the graph
@@ -45,34 +45,37 @@
 //     }
 // }
 
-// void my_topological_sort_using_source_removal(int length, int *indegree, int graph[length][length]) {
+// void my_topological_sort_using_source_removal(int length, int *indegree, int graph[length][length], int topological_sort[length]) {
 //     /*
 //         Input : 
 //             - length: the number of nodes in the graph
 //             - indegree: an array representing the indegree of each node in the graph
 //             - graph: a 2D array representing the adjacency matrix of the graph
 //                      where graph[i][j] = 1 if there is an edge from node i to node j, 0 otherwise
+//             - topological_sort: An array to store the topological ordering.
 //         Output : 
 //         Explanation : 
 //             - This function performs a topological sort on a directed acyclic graph (DAG) using the source removal algorithm.
 //             - It deletes nodes with indegree 0 iteratively until all nodes are visited.
 //         Requirement : 
 //             - _deleted_node(int length, int node, int *indegree, int graph[length][length]) must be defined which will modify the indegree array and update the graph by removing edges.
-//             - void _find_indegree(int length, int graph[length][length], int *indegree) must be defined which will calculate the indegree of each node in the graph.
+//             - void my_find_indegree(int length, int graph[length][length], int *indegree) must be defined which will calculate the indegree of each node in the graph.
 //     */
 
 //     int visited[length];
 //     for( int i=0;i<length;i++ ) {
 //         visited[i] = 0;
 //     }
+//     int index = 0;
 
 //     while(1) {
 //         int temp = 0;
 //         for( int i=0;i<length;i++ ) {
 //             if(indegree[i]==0 && visited[i]==0){
-//                 printf("deleting node : %d\n", i+1);
+//                 // printf("deleting node : %d\n", i+1);
 //                 _deleted_node(length, i, indegree, graph);
 //                 visited[i] = 1;
+//                 topological_sort[index++] = i + 1; // Add current node to topological sort array
 //                 temp = 1;
 //             }
 //         }
@@ -89,9 +92,13 @@ int main() {
                         {0, 1, 0, 1},
                         {0, 0, 0, 0} };
     int indegree[4] = {0};
-    _find_indegree(n, graph, indegree);
-    for( int i=0;i<n;i++ ) {
-        printf("in degree of %d is %d\n", i, indegree[i]);
+    int topological_sort[4] = {0};
+    my_find_indegree(n, graph, indegree);
+    my_topological_sort_using_source_removal(n, indegree, graph, topological_sort);
+    
+    printf("Topological Sort: ");
+    for (int i = 0; i < n; i++) {
+        printf("%d- ", topological_sort[i]);
     }
-    my_topological_sort_using_source_removal(n, indegree, graph);
+    printf("\n");
 }

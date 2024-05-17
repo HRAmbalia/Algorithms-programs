@@ -32,6 +32,10 @@ This repository contains various algorithm implementations in C.
     -   Topological sort using source removal
     -   Find articulation point
 
+* **Lab 08: Graph Algorithms**
+    -   Dijkstra'a Algorithm
+    -   FloydWarshall algorithm
+
 ## Key Files
 
 * **HRA.h:** Header file containing algorithm-related functions and definitions.

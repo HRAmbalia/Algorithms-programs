@@ -63,7 +63,6 @@ int main() {
     int n = 100;
     int **memo = my_initialize_2d_dynamic_memory(100, 100);
 
-
     printf("Operations required : %d\n", my_minimum_edit_string_distance(init_string, final_string, init_length, final_length, memo));
     return 0;
 }
