@@ -36,6 +36,21 @@ This repository contains various algorithm implementations in C.
     -   Dijkstra'a Algorithm
     -   FloydWarshall algorithm
 
+* **Lab 09: String Match algorithms - 01**
+    -   String matching Naive method
+    -   String matching recursive method
+
+* **Lab 10: String Match algorithms - 02**
+
+* **Lab 11: Geometric Algorithms - 01**
+    -   Check collinearity 
+    -   Check direction
+    -   Check Intersection
+    -   Find closest pair
+
+* **Lab 12: Geometric Algorithms - 02**
+    -   Check convex or Concave
+
 ## Key Files
 
 * **HRA.h:** Header file containing algorithm-related functions and definitions.

@@ -5,17 +5,17 @@
 #include <math.h>
 #include <stdlib.h>
 
-int find_code(char *mapping, char c) {
+int _find_code_for_robin_karp(char *mapping, char c) {
     for( int i=0;i<5;i++ )
         if(mapping[i]==c)
             return i+1;
 }
 
-int calculate_pattern_hash(char *pattern, char *mapping, int mapping_length) {
+int _calculate_pattern_hash_for_robin_karp(char *pattern, char *mapping, int mapping_length) {
     int pattern_len = strlen(pattern);
     int pattern_hash_code = 0;
     for( int i=0;i<pattern_len;i++ ){
-        int temp = find_code(mapping, pattern[i]);
+        int temp = _find_code_for_robin_karp(mapping, pattern[i]);
         pattern_hash_code += temp*pow(mapping_length, pattern_len-i-1);
     }
     return pattern_hash_code;
@@ -24,23 +24,23 @@ int calculate_pattern_hash(char *pattern, char *mapping, int mapping_length) {
 int my_robin_karp(char *str, char *pattern, char *mapping, int mapping_length) {
     int str_len = strlen(str);
     int pattern_len = strlen(pattern);
-    int pattern_hash_code = calculate_pattern_hash(pattern, mapping, mapping_length);
+    int pattern_hash_code = _calculate_pattern_hash_for_robin_karp(pattern, mapping, mapping_length);
 
     int temp_hash_code = 0;
     for( int i=0;i<str_len-pattern_len+1;i++ ) {
         for( int j=0;j<pattern_len;j++ ) {
             // printf(" %c-%d %d ", str[i+j], pattern_len-j-1, i);
             if( i==0 ) {
-                int temp = find_code(mapping, str[i+j]);
+                int temp = _find_code_for_robin_karp(mapping, str[i+j]);
                 temp_hash_code += temp*pow(mapping_length, pattern_len-j-1);
             }
             else {
                 if( j==0 ) {
                     // printf(" i:%d j:%d ", i, j);
-                    int temp_prev = find_code(mapping, str[i-1]);
+                    int temp_prev = _find_code_for_robin_karp(mapping, str[i-1]);
                     temp_hash_code -= (temp_prev*pow(mapping_length, pattern_len-1));
                     temp_hash_code = temp_hash_code*mapping_length;
-                    int temp_next = find_code(mapping, str[i+pattern_len-1]);
+                    int temp_next = _find_code_for_robin_karp(mapping, str[i+pattern_len-1]);
                     temp_hash_code += temp_next;
                 }
             }
@@ -65,10 +65,10 @@ int my_robin_karp(char *str, char *pattern, char *mapping, int mapping_length) {
 
 int main() {
     int str_len = 10;
-    char str[] = "ccacdaeeba";
+    char str[] = "ccacdaeeba ";
     int pattern_len = 3;
     char pattern[] = "dba";
-    char mapping[] = {'a', 'b', 'c', 'd', 'e'}; // mapping is done with the index ie a-0, b-1, c-2, etc..
+    char mapping[] = {'a', 'b', 'c', 'd', 'e', ' '}; // mapping is done with the index ie a-0, b-1, c-2, etc..
     int mapping_length = 5;
     
     printf("Text : %s\n", str);

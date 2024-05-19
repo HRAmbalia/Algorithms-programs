@@ -13,13 +13,23 @@ Lab_03/Lab03_manual.pdf
 
 Lab_04/*.o
 Lab_04/*.out
-Lab_04/Lab04_manual.pdf
+Lab_01/*.pdf
+Lab_02/*.pdf
+Lab_03/*.pdf
+Lab_04/*.pdf
+Lab_05/*.pdf
+Lab_06/*.pdf
+Lab_07/*.pdf
+Lab_08/*.pdf
+Lab_09/*.pdf
+Lab_10/*.pdf
+Lab_11/*.pdf
+Lab_12/*.pdf
 
-# Ignore log files
+
 *.log
 .gitignore
 
-# Ignore temporary directories
 Lab_04/Practice/
 
 Project/
@@ -27,3 +37,5 @@ Project/
 compile.sh
 
 /todo.txt
+.vscode
+.gitignore

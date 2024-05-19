@@ -14,43 +14,152 @@
 /* ------------------------ EXTRA ------------------------ */ 
 
 // Simple summation of two integers
+/**
+ * @brief This function sums two integer passed as argument
+ * 
+ * @param integer_01 (int) first number 
+ * @param integer_02 (int) second number 
+ * 
+ * @return (int) Returns sum of two integer passed
+ */
 int addNumbers(int integer_01, int integer_02);
 
 // Function to print 1d integer array
+/**
+ * @brief This function 1D integer array
+ * 
+ * @param arr[] (int[]) Integer array
+ * @param size (int) size of the array passed
+ * 
+ * @return None - Prints array passed by user
+ */
 void my_print_1d_integer_array(int arr[], int size);
 
 // Function to print 2d integer array
+/**
+ * @brief This function prints 2D integer array which is dynamically allocated
+ * 
+ * @param rows (int) No of rows of 2D array
+ * @param cols (int) No of columns of 2D array
+ * @param arr (int**) pointer to the dymanically allocated 2D matrix
+ * 
+ * @return None - Prints 2D array passed by user
+ */
 void my_print_2d_integer_array(int rows, int cols, int** arr);
 
 // Function to print 2d matrix
+/**
+ * @brief This function prints 2D integer array which is dynamically allocated
+ * 
+ * @param n (int) No of rows and columns in passed 2D array
+ * @param graph[][] (int[][]) passed 2D graph
+ *  
+ * @return None - Prints 2D array passed by user
+ */
 void my_print_2d_matrix(int n, int graph[n][n]);
+
+// Find max of two integer
+/**
+ * @brief This function returns maximum of two integer
+ * 
+ * @param a (int) first integer
+ * @param b (int) second integer
+ * 
+ * @return (int) - return max of two integer
+ */
+int my_maximum_of_two_integer(int a, int b);
 
 /* ------------------------ LAB 01 ------------------------ */ 
 
 // Lab01 : Insertions Sort
+/**
+ * @brief This function performs the insertion sort algorithm on the given integer array in ascending order. It takes the input array and its length as parameters and modifies the array in-place to achieve the sorted order.
+ * 
+ * @param integer_array (int[]) An array of integers to be sorted.
+ * @param length_of_array (int) The length of the integer_array.
+ * 
+ * @return None - The array integer_array[] sorted in non-decreasing order.
+ */
 void my_insertionSort_asc_for_integer_array(int integer_array[], int length_of_array);
 
 // Lab01 : Magic Square
+/**
+ * @brief This function generates a magic square of order 'length' using the Siamese method.  It takes the size of the magic square as input and returns a dynamically allocated 2D array representing the generated magic square.
+ * 
+ * @param length (int) The size of the magic square (number of rows or columns as it'll be square matrix).
+ * 
+ * @return (int**) Returns a dynamically allocated 2D array representing the magic square.
+ */
 int** my_generate_magic_square(int length);
 
 /* ------------------------ LAB 02 ------------------------ */ 
 
 // Lab02 : Merge Sort using recursion
+/**
+ * @brief This function implements the recursive part of the merge sort algorithm. It recursively divides the input array into two halves until each subarray has only one element. Then it merges the sorted subarrays using the merge_for_recursion_while function.
+ * 
+ * @param arr[] (int[]) An array of integers to be sorted.
+ * @param p (int) The starting index of the subarray to be sorted.
+ * @param r (int) The ending index of the subarray to be sorted.
+ * 
+ * @see void _merge_for_recursion_while(int list[], int low, int mid, int high)
+ * 
+ * @return None - The array arr[] sorted in non-decreasing order.
+ */
 void my_merge_sort_asc_recursion(int arr[], int p, int r);
 
 // Lab02 : Merge Sort using while
+/**
+ * @brief This function implements the iterative version of the merge sort algorithm using a while loop. It divides the array into subarrays of increasing size and merges them in sorted order using the _merge_for_recursion_while function.
+ * 
+ * @param arr[] (int[]) An array of integers to be sorted.
+ * @param length (int) The number of elements in the array.
+ * 
+ * @see void _merge_for_recursion_while(int list[], int low, int mid, int high)
+ * 
+ * @return None - The array arr[] sorted in non-decreasing order.
+ */
 void my_merge_sort_asc_while(int arr[], int length);
 
 // Helper function for : merge_sort_recursion
 void _merge_for_recursion_while(int list[], int low, int mid, int high);
 
 // Lab02 : Quick Sort using recursion
+/**
+ * @brief This function implements the recursive part of the quick sort algorithm. It selects a pivot element from the array and partitions the array such that elements smaller than the pivot are placed before it, and elements greater than the pivot are placed after it. Then, it recursively sorts the subarrays before and after the pivot.
+ * 
+ * @param arr[] (int[]) An array of integers to be sorted.
+ * @param length (int) The number of elements in the array.
+ * 
+ * @see int _temporary_partition(int arr[], int low, int high)
+ * 
+ * @return None - The array arr[] sorted in non-decreasing order.
+ */
 void my_quick_sort_asc_recursion(int arr[], int low, int high);
 
 // Lab02 : Quick Sort using while
+/**
+ * @brief This function will sort the integer_array[] using recursion.
+ * 
+ * @param arr[] (int[]) An array of integers to be sorted.
+ * @param low (int) The starting index of the subarray to be sorted.
+ * @param high (int) The ending index of the subarray to be sorted.
+ * 
+ * @see int _temporary_partition(int arr[], int low, int high)
+ * 
+ * @return None - The array arr[] sorted in non-decreasing order.
+ */
 void my_quick_sort_asc_while(int arr[], int low, int high);
 
 // Helper function for : temp_partition
+/**
+ * @brief This function will swap two integer variable passed by reference
+ * 
+ * @param a (*a) first integer passed by address
+ * @param b (*b) second integer passed by address
+ * 
+ * @return None - Two variables will be swapped
+ */
 void my_swap_two_variable(int *a, int *b);
 
 // Helper function for : my_quick_sort
@@ -296,7 +405,16 @@ void my_find_indegree(int length, int graph[length][length], int *indegree);
 void my_articulation_point(int length, int **graph, int is_ap[]);
 
 // Helper function for : my_articulation_point
+/**
+ * @brief This function returns minimum of two integer
+ * 
+ * @param a (int) first integer
+ * @param b (int) second integer
+ * 
+ * @return (int) - return min of two integer
+ */
 int my_minimum_of_two_integer(int a, int b);
+
 void _DFS_to_find_articulation_point(int length, int **graph, int node, int visited[], int disc_time[], int lowest_disc_time[], int parent[], int is_ap[]);
 
 /* ------------------------ LAB 08 ------------------------ */ 
@@ -327,5 +445,113 @@ int _mindist ( int dist[], bool check[], int V );
  * @return None - Shortest distance will be updated in 2D array itself passed by user.
  */
 void my_floydWarshall_algo(int n, int graph[n][n]);
+
+/* ------------------------ LAB 09 ------------------------ */ 
+
+// Lab 09 : String matching naive method
+/**
+ * @brief This function implements a naive string matching algorithm. It iterates through each position in the array and checks if the substring starting from that position matches the pattern. If a match is found, it returns the starting index. If no match is found after checking all positions, it returns -1.
+ * 
+ * @param array[] (Character array) in which we want to find the pattern.
+ * @param pattern[] (Character array) that we want to search for in the array.
+ * 
+ * @return (int) Returns the starting index of the first occurrence of the pattern in the array. Returns -1 if the pattern is not found in the array.
+ */
+int my_naive_string_match(char array[], char pattern[]);
+
+// Lab 09 : String matching recursive method
+/**
+ * @brief This function implements a recursive string matching algorithm. It checks if the substring can be found starting at the given index in the main string. If the length of the remaining portion of mainStr is less than the length of substr, it returns -1 (base case). If the substring matches the portion of mainStr starting at the current index, it returns the current index. If not, it recursively calls itself with the next index, continuing the search.
+ * 
+ * @param mainStr (char *) A pointer to the main string in which we want to find the substring.
+ * @param substr (char *) A pointer to the substring we are searching for within mainStr.
+ * @param index (int) The current index in mainStr from which we are checking for the substring.
+ * 
+ * @return (int) Returns the starting index of the first occurrence of the substring within the main string. Returns -1 if the substring is not found.
+ */
+int my_recursive_string_match(char *mainStr, char *substr, int index);
+
+/* ------------------------ LAB 10 ------------------------ */ 
+
+/* ------------------------ LAB 11 ------------------------ */ 
+
+struct _point {
+    int x, y;
+};
+
+// Lab 11 : Check collinearity
+/**
+ * @brief The function calculates the slopes between the pairs of points (p1, p2) and (p2, p3). It uses the fact that for three points to be collinear, the slope of the line between p1 and p2 should be the same as the slope of the line between p2 and p3. The slopes are calculated using the formula (y2 - y1) / (x2 - x1).
+ * 
+ * @param p1 (struct _point) a structure representing the first point with coordinates (x1, y1)
+ * @param p2 (struct _point) a structure representing the second point with coordinates (x2, y2)
+ * @param p3 (struct _point) a structure representing the third point with coordinates (x3, y3)
+ * 
+ * @return (int) Returns 1 if the points are collinear. Returns 0 if the points are not collinear.
+ */
+int my_check_if_3_point_Collinear(struct _point p1, struct _point p2, struct _point p3);
+
+// Lab 11 : Check direction
+/**
+ * @brief The function calculates the direction of the point p1 with respect to the line segment p0-p2 using the cross product.
+ * 
+ * @param p1 (struct _point) a structure representing the first point with coordinates (x1, y1)
+ * @param p2 (struct _point) a structure representing the second point with coordinates (x2, y2)
+ * @param p3 (struct _point) a structure representing the third point with coordinates (x3, y3)
+ * 
+ * @return (int) Returns a positive value if p1 is to the left of the line segment p0-p2. Returns a negative value if p1 is to the right of the line segment p0-p2. Returns 0 if p1 is on the line segment p0-p2
+ */
+int my_direction_of_p1_wrt_p2(struct _point p0, struct _point p1, struct _point p2);
+
+// Lab 11 : Check Intersection
+/**
+ * @brief The function checks the orientations of the points to determine if the two line segments intersect.
+ * 
+ * @param p1 (struct _point) a structure representing the first _point of the first line segment with coordinates (x1, y1)
+ * @param q1 (struct _point) a structure representing the second _point of the first line segment with coordinates (x2, y2)
+ * @param p2 (struct _point) a structure representing the first _point of the second line segment with coordinates (x3, y3)
+ * @param q2 (struct _point) a structure representing the second _point of the second line segment with coordinates (x4, y4)
+ * 
+ * @see int _orientation_for_intersection(struct _point p,struct _point q, struct _point r)
+ * @see int _on_segment_for_intersection(struct _point p, struct _point q, struct _point r)
+ * 
+ * @return (int) Returns 1 if the two line segments intersect. Returns 0 if the two line segments do not intersect.
+ */
+int my_check_2_line_intersection(struct _point p1, struct _point q1, struct _point p2, struct _point q2);
+
+// Helper function for : my_check_2_line_intersection
+int _orientation_for_intersection(struct _point p,struct _point q, struct _point r);
+
+// Helper function for : my_check_2_line_intersection
+int _on_segment_for_intersection(struct _point p, struct _point q, struct _point r);
+
+// Lab 09 : Closest pair
+/**
+ * @brief The function iterates over all pairs of points to find the pair with the smallest distance between them. It uses the my_distance_btw_2_point function to calculate the distance between two points. It keeps track of the minimum distance found and the indices of the closest pair of points. It returns a dynamically allocated array containing the closest pair of points.
+ * 
+ * @param points (struct _point points[]) an array of _point structures representing the set of points
+ * @param n (int) the number of points in the array.
+ * 
+ * @see float my_distance_btw_2_point(struct _point p1, struct _point p2)
+ * 
+ * @return (struct _point*) Returns a dynamically allocated array containing the closest pair of points
+ */
+struct _point* my_closest_pair_btw_multi_points(struct _point points[], int n);
+
+// Helper function for : my_closest_pair_btw_multi_points
+float my_distance_btw_2_point(struct _point p1, struct _point p2);
+
+/* ------------------------ LAB 12 ------------------------ */ 
+
+// Check convex or Concave
+/**
+ * @brief The function iterates over all pairs of points to find the pair with the smallest distance between them. It uses the my_distance_btw_2_point function to calculate the distance between two points. It keeps track of the minimum distance found and the indices of the closest pair of points. It returns a dynamically allocated array containing the closest pair of points.
+ * 
+ * @param points (struct _point points[]) an array of _point structures representing the set of points
+ * @param n (int) the number of points in the array.
+ * 
+ * @return (int) Returns 1 if the polygon is convex. Returns 0 if the polygon is concave.
+ */
+int my_check_convex_concave(struct _point points[], int n);
 
 #endif

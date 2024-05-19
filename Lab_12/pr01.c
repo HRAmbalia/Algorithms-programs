@@ -1,35 +1,47 @@
 #include <stdio.h>
 #include <stdbool.h>
 
-struct Point {
+struct _point {
     int x, y;
 };
 
-int orientation(struct Point p, struct Point q, struct Point r) {
+int _orientation_for_intersection(struct _point p, struct _point q, struct _point r) {
     int val = (q.y-p.y)*(r.x-q.x) - (q.x-p.x)*(r.y-q.y);
-    if( val==0 ) 
-        return 0;
+    if( val==0 ) return 0;
     return( val>0 ) ? 1 : 2;
 }
 
-bool check_convex_concave(struct Point points[], int n) {
-    if( n<3 ) 
-        return false;
-    bool temp1=false, temp2=false;
-    for( int i=0;i<n;i++ ) {
-        int orient = orientation( points[i], points[(i+1)%n], points[(i+2)%n] );
-        if( orient>0 )
-            temp1 = true;
-        else if( orient<0 )
-            temp2 = true;
-    }
-    return !(temp1 && temp2);
-}
+// int my_check_convex_concave(struct _point points[], int n) {
+//     /*
+//         Input:
+//         - points: an array of structures representing the vertices of the polygon, each with coordinates (x, y)
+//         - n: the number of vertices in the polygon
+
+//         Output:
+//         - Returns 1 if the polygon is convex
+//         - Returns 0 if the polygon is concave
+
+//         Explanation:
+//         - A polygon is convex if all the interior angles are less than 180 degrees, which means that all the cross products of the edges should have the same sign.
+//     */
+    
+//     if( n<3 ) 
+//         return 0;
+//     int temp1=0, temp2=0;
+//     for( int i=0;i<n;i++ ) {
+//         int orient = orientation( points[i], points[(i+1)%n], points[(i+2)%n] );
+//         if( orient>0 )
+//             temp1 = 1;
+//         else if( orient<0 )
+//             temp2 = 1;
+//     }
+//     return !(temp1 && temp2);
+// }
 
 int main() {
-    struct Point points[] = {{0, 0}, {4, 0}, {4, 4}, {1, 2}, {2, 1}};
+    struct _point points[] = {{0, 0}, {4, 0}, {4, 4}, {1, 2}, {2, 1}};
     int n = 5;
-    if( check_convex_concave(points, n) )
+    if( my_check_convex_concave(points, n) )
         printf("The polygon is convex.\n");
     else
         printf("The polygon is concave.\n");

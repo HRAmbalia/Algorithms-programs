@@ -1,4 +1,4 @@
 #!/bin/bash
-gcc myfunction.c ./Lab_03/ex02.c -o temp
+gcc myfunction.c ./Lab_11/pr04.c -o temp
 ./temp
 rm ./temp

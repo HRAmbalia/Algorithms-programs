@@ -2,7 +2,9 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdbool.h>
+#include <string.h>
 #include <limits.h>
+#include <math.h>
 #define INT_MAX __INT_MAX__
 
 #define INF 99999
@@ -60,6 +62,7 @@ void my_print_2d_integer_array(int rows, int cols, int** arr) {
     }
 }
 
+// 
 void my_print_2d_matrix(int n, int graph[n][n]) {
     /*
         Input:
@@ -78,6 +81,20 @@ void my_print_2d_matrix(int n, int graph[n][n]) {
         }
         printf("\n");
     }
+}
+
+// 
+int my_maximum_of_two_integer(int a, int b) {
+    /*
+        Input:
+            n (int): Size of the graph.
+            graph (int[n][n]): 2D array representing the graph.
+        Output:
+            void (prints the graph to the console).
+        Explanation:
+            This function prints the elements of the graph (2D array) to the console.
+    */
+    return (a<b) ? b:a;
 }
 
 /* ------------------------------------- LAB 01 ------------------------------------- */
@@ -1013,15 +1030,6 @@ void _DFS_to_find_articulation_point(int length, int **graph, int node, int visi
         
         Explanation:
             - This function implements Depth First Search (DFS) to traverse a graph and identify articulation points (AP).
-            - It starts by initializing some variables and marking the current node as visited.
-            - Then, it updates the discovery time and lowest discovery time of the current node.
-            - The function iterates over all adjacent nodes of the current node.
-                - If an adjacent node is not visited, it recursively calls DFS on that node, marking the current node as its parent.
-                - It updates the lowest discovery time of the current node based on the child's lowest discovery time.
-                - If the current node is the root of the DFS tree and has more than one child, it's marked as an articulation point.
-                - If the current node is not the root and the lowest discovery time of the child is greater than or equal to the discovery time of the current node, it's marked as an articulation point.
-                - If the adjacent node is already visited and not the parent of the current node, it updates the lowest discovery time of the current node based on the adjacent node's discovery time.
-            - The function does not return any explicit value but updates various arrays to reflect the DFS traversal and identify articulation points.
     */
 
     static int time = 0;
@@ -1134,4 +1142,269 @@ void my_floydWarshall_algo(int n, int graph[n][n]) {
             }
         }
     }
+}
+
+/* ------------------------------------- LAB 09 ------------------------------------- */
+
+// Lab 09 : String matching using Naive method
+int my_naive_string_match(char array[], char pattern[]) {
+    /*
+        Input : 
+            - array: A character array (string) in which we want to find the pattern.
+            - pattern: A character array (string) that we want to search for in the array.
+            
+        Output : 
+            - Returns the starting index of the first occurrence of the pattern in the array.
+            - Returns -1 if the pattern is not found in the array.
+            
+        Explanation : 
+            - This function implements a naive string matching algorithm.
+            - It iterates through each position in the array and checks if the substring starting
+              from that position matches the pattern.
+            - If a match is found, it returns the starting index.
+            - If no match is found after checking all positions, it returns -1.
+    */
+
+    int array_len = strlen(array);
+    int pattern_len = strlen(pattern);
+    if (pattern_len>array_len) {
+        return -1;
+    }
+    for( int i=0;i<array_len;i++ ) {
+        // printf("Outer Loop: i = %d\n", i);
+        int j;
+        for( j=0;j<pattern_len;j++ ) {
+            // printf("Inner Loop: j = %d\n", j);
+            if( array[i+j]==pattern[j]) {
+                // printf("array[%d+%d] (%c) equal to pattern[%d] (%c)\n", i, j, array[i + j], j, pattern[j]);
+                continue;
+            }
+            else {
+                // printf("array[%d+%d] (%c) not equal to pattern[%d] (%c)\n", i, j, array[i + j], j, pattern[j]);
+                break;
+            }
+        }
+        if(j==pattern_len) {
+            return i;
+        }
+    }
+}
+
+// Lab 09 : String matching using recursive method
+int my_recursive_string_match(char *mainStr, char *substr, int index) {
+    /*
+        Input :
+            - mainStr: A pointer to the main string in which we want to find the substring.
+            - substr: A pointer to the substring we are searching for within mainStr.
+            - index: The current index in mainStr from which we are checking for the substring.
+        
+        Output :
+            - Returns the starting index of the first occurrence of the substring within the main string.
+            - Returns -1 if the substring is not found.
+        
+        Explanation :
+            - This function implements a recursive string matching algorithm.
+            - It checks if the substring can be found starting at the given index in the main string.
+            - If the length of the remaining portion of mainStr is less than the length of substr, it returns -1 (base case).
+            - If the substring matches the portion of mainStr starting at the current index, it returns the current index.
+            - If not, it recursively calls itself with the next index, continuing the search.
+    */
+   
+    int mainLen = strlen(mainStr);
+    int subLen = strlen(substr);
+
+    if( index+subLen > mainLen )
+        return -1;
+    if( strncmp(mainStr+index, substr, subLen)==0 )
+        return index;
+    else
+        return my_recursive_string_match(mainStr, substr, index + 1);
+}
+
+/* ------------------------------------- LAB 10 ------------------------------------- */
+
+
+/* ------------------------------------- LAB 11 ------------------------------------- */
+
+// Lab 11 : Check collinearity 
+int my_check_if_3_point_Collinear(struct _point p1, struct _point p2, struct _point p3) {
+    /*
+        Input:
+        - p1: a structure representing the first point with coordinates (x1, y1)
+        - p2: a structure representing the second point with coordinates (x2, y2)
+        - p3: a structure representing the third point with coordinates (x3, y3)
+
+        Output:
+        - Returns 1 if the points are collinear
+        - Returns 0 if the points are not collinear
+
+        Explanation:
+        - The function calculates the slopes between the pairs of points (p1, p2) and (p2, p3).
+        - It uses the fact that for three points to be collinear, the slope of the line between p1 and p2 should be the same as the slope of the line between p2 and p3.
+        - The slopes are calculated using the formula (y2 - y1) / (x2 - x1).
+        - To avoid division and possible floating-point precision issues, the function compares the products of the differences, which should be equal for collinear points.
+        - Specifically, it checks if (y3 - y2) * (x2 - x1) is equal to (y2 - y1) * (x3 - x2).
+    */
+    int slope1 = ( p3.y-p2.y ) * ( p2.x-p1.x );
+    int slope2 = ( p2.y-p1.y ) * ( p3.x-p2.x );
+    if( slope1==slope2 )
+        return 1;
+    else
+        return 0;
+}
+
+// Lab 11 : Check direction
+int my_direction_of_p1_wrt_p2(struct _point p0, struct _point p1, struct _point p2) {
+    /*
+        Input:
+        - p0: a structure representing the first point with coordinates (x0, y0)
+        - p1: a structure representing the second point with coordinates (x1, y1)
+        - p2: a structure representing the third point with coordinates (x2, y2)
+
+        Output:
+        - Returns a positive value if p1 is to the left of the line segment p0-p2
+        - Returns a negative value if p1 is to the right of the line segment p0-p2
+        - Returns 0 if p1 is on the line segment p0-p2
+
+        Explanation:
+        - The function calculates the direction of the point p1 with respect to the line segment p0-p2 using the cross product.
+        - By computing the cross product (x1 - x0)*(y2 - y0) - (y1 - y0)*(x2 - x0), we can determine the relative direction:
+          - If the result is positive, p1 is to the left of the line segment p0-p2.
+          - If the result is negative, p1 is to the right of the line segment p0-p2.
+          - If the result is zero, p1 is collinear with the line segment p0-p2.
+    */
+    int tmp1 = p1.x - p0.x;
+    int tmp2 = p1.y - p0.y;
+    int tmp3 = p2.x - p0.x;
+    int tmp4 = p2.y - p0.y;
+    int direction = (tmp1*tmp4) - (tmp2*tmp3);
+    return direction;
+}
+
+// Check Intersection
+int my_check_2_line_intersection(struct _point p1, struct _point q1, struct _point p2, struct _point q2) {
+    /*
+        Input:
+        - p1: a structure representing the first _point of the first line segment with coordinates (x1, y1)
+        - q1: a structure representing the second _point of the first line segment with coordinates (x2, y2)
+        - p2: a structure representing the first _point of the second line segment with coordinates (x3, y3)
+        - q2: a structure representing the second _point of the second line segment with coordinates (x4, y4)
+
+        Output:
+        - Returns 1 if the two line segments intersect
+        - Returns 0 if the two line segments do not intersect
+
+        Explanation:
+        - The function checks the orientations of the points to determine if the two line segments intersect.
+        - It uses the orientation function to check the relative orientation of triplets of points.
+        - It then uses the on-segment function to check if collinear points lie on the segment.
+        - The function checks the general case of intersection (if the orientations of the pairs of points differ).
+        - It also checks the special case of collinear points being on the segment.
+    */
+    int o1 = _orientation_for_intersection(p1, q1, p2);
+    int o2 = _orientation_for_intersection(p1, q1, q2);
+    int o3 = _orientation_for_intersection(p2, q2, p1);
+    int o4 = _orientation_for_intersection(p2, q2, q1);
+
+    // General case
+    if (o1 != o2 && o3 != o4)
+        return 1;
+
+    // Special cases
+    if (o1 == 0 && _on_segment_for_intersection(p1, p2, q1))
+        return 1;
+    if (o2 == 0 && _on_segment_for_intersection(p1, q2, q1))
+        return 1;
+    if (o3 == 0 && _on_segment_for_intersection(p2, p1, q2))
+        return 1;
+    if (o4 == 0 && _on_segment_for_intersection(p2, q1, q2))
+        return 1;
+
+    return 0;
+}
+
+int _orientation_for_intersection(struct _point p,struct _point q, struct _point r) {
+    int val = (q.y - p.y) * (r.x - q.x) - (q.x - p.x) * (r.y - q.y);
+    if (val == 0) return 0;  // collinear
+    return (val > 0) ? 1 : 2; // clock or counterclock wise
+}
+
+int _on_segment_for_intersection(struct _point p, struct _point q, struct _point r) {
+    if (q.x <= my_maximum_of_two_integer(p.x, r.x) && q.x >= my_minimum_of_two_integer(p.x, r.x) &&
+        q.y <= my_maximum_of_two_integer(p.y, r.y) && q.y >= my_minimum_of_two_integer(p.y, r.y))
+        return 1;
+    return 0;
+}
+
+// Find closest pair
+struct _point* my_closest_pair_btw_multi_points(struct _point points[], int n) {
+    /*
+        Input:
+        - points: an array of _point structures representing the set of points
+        - n: the number of points in the array
+
+        Output:
+        - Returns a dynamically allocated array containing the closest pair of points
+
+        Explanation:
+        - The function iterates over all pairs of points to find the pair with the smallest distance between them.
+        - It uses the my_distance_btw_2_point function to calculate the distance between two points.
+        - It keeps track of the minimum distance found and the indices of the closest pair of points.
+        - It returns a dynamically allocated array containing the closest pair of points.
+    */
+    
+    float min_dist = my_distance_btw_2_point(points[0], points[1]);
+    int p1 = 0, p2 = 1;
+
+    for (int i = 0; i < n - 1; i++) {
+        for (int j = i + 1; j < n; j++) {
+            float dist = my_distance_btw_2_point(points[i], points[j]);
+            if (dist < min_dist) {
+                min_dist = dist;
+                p1 = i;
+                p2 = j;
+            }
+        }
+    }
+
+    // Allocate memory for the closest pair and copy the points
+    struct _point* closest = malloc(2 * sizeof(struct _point));
+    closest[0] = points[p1];
+    closest[1] = points[p2];
+
+    return closest;
+}
+
+float my_distance_btw_2_point(struct _point p1, struct _point p2) {
+    return sqrt((p1.x - p2.x) * (p1.x - p2.x) + (p1.y - p2.y) * (p1.y - p2.y));
+}
+
+/* ------------------------------------- LAB 12 ------------------------------------- */
+
+// Lab 11 : Check convex or Concave
+int my_check_convex_concave(struct _point points[], int n) {
+    /*
+        Input:
+        - points: an array of structures representing the vertices of the polygon, each with coordinates (x, y)
+        - n: the number of vertices in the polygon
+
+        Output:
+        - Returns 1 if the polygon is convex
+        - Returns 0 if the polygon is concave
+
+        Explanation:
+        - A polygon is convex if all the interior angles are less than 180 degrees, which means that all the cross products of the edges should have the same sign.
+    */
+    
+    if( n<3 ) 
+        return 0;
+    int temp1=0, temp2=0;
+    for( int i=0;i<n;i++ ) {
+        int orient = orientation( points[i], points[(i+1)%n], points[(i+2)%n] );
+        if( orient>0 )
+            temp1 = 1;
+        else if( orient<0 )
+            temp2 = 1;
+    }
+    return !(temp1 && temp2);
 }
